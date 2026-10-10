@@ -20,7 +20,7 @@ jobs:
   progress:
     name: progress ${{ matrix.flow }}
     runs-on: ubuntu-latest
-    # Red flows are expected until each one is finished: they don't block the PR.
+    # Es normal que los flujos estén en rojo hasta que se terminen: no bloquean el PR.
     continue-on-error: true
     strategy:
       fail-fast: false

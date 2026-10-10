@@ -1,7 +1,7 @@
-"""Input/output helpers for the console menus. Shared code — already implemented.
+"""Funciones de entrada/salida para los menús de consola. Código compartido — ya implementado.
 
-Every ask_* keeps asking until the input is valid. With `optional=True`, an
-empty answer returns None (useful for "leave blank to keep the current value").
+Cada ask_* sigue preguntando hasta que la respuesta sea válida. Con `optional=True`,
+una respuesta vacía devuelve None (útil para "dejar en blanco para mantener el valor actual").
 """
 
 from typing import Iterable
@@ -65,7 +65,7 @@ def title(text: str) -> None:
 
 
 def print_products(products: Iterable[Product]) -> None:
-    """One product per line as a table."""
+    """Un producto por línea, como tabla."""
     products = list(products)
     if not products:
         print("  (no products)")

@@ -1,4 +1,4 @@
-"""The seed file (data/seed.json) the app starts from."""
+"""El archivo seed (data/seed.json) con el que arranca la app."""
 
 import json
 import shutil
@@ -19,7 +19,7 @@ def test_seed_has_at_least_30_products_with_unique_codes():
 
 @pytest.mark.shared
 def test_seed_codes_are_not_sorted():
-    """Sorted codes would turn the BST into a list (height == number of products)."""
+    """Con los códigos ordenados, el BST se convertiría en una lista (altura == cantidad de productos)."""
     product_codes = [p["code"] for p in SEED["products"]]
     assert product_codes != sorted(product_codes)
 

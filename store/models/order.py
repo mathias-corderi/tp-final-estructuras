@@ -1,7 +1,7 @@
-"""Orders — FLOW 4 (cart and orders).
+"""Pedidos — FLUJO 4 (carrito y pedidos).
 
-An Order is created `pending` when a customer buys (stock is reserved at that
-moment); the owner later completes it or cancels it.
+Un Order se crea `pending` cuando un cliente compra (en ese momento se reserva
+el stock); después el dueño lo completa o lo cancela.
 Tests: tests/unit/test_order_models.py
 """
 
@@ -11,7 +11,7 @@ from typing import Any
 
 
 class OrderStatus(str, Enum):
-    """Already implemented. OrderStatus("pending") -> OrderStatus.PENDING; ValueError if invalid."""
+    """Ya implementado. OrderStatus("pending") -> OrderStatus.PENDING; ValueError si es inválido."""
 
     PENDING = "pending"
     COMPLETED = "completed"
@@ -19,10 +19,10 @@ class OrderStatus(str, Enum):
 
 
 class OrderItem:
-    """One line of an order. `unit_price` is frozen at purchase time (final price, with discount).
+    """Una línea del pedido. `unit_price` queda fijo al momento de la compra (precio final, con descuento).
 
-    code int; name non-empty str; quantity int > 0; unit_price number > 0 (stored as float).
-    ValueError on bad data.
+    code int; name str no vacío; quantity int > 0; unit_price número > 0 (se guarda como float).
+    ValueError si algún dato es inválido.
     """
 
     def __init__(self, code: int, name: str, quantity: int, unit_price: float) -> None:
@@ -46,28 +46,28 @@ class OrderItem:
 
     @property
     def subtotal(self) -> float:
-        """quantity * unit_price, rounded to 2 decimals."""
+        """quantity * unit_price, redondeado a 2 decimales."""
         raise NotImplementedError("Flow 4: OrderItem.subtotal")
 
     def to_dict(self) -> dict[str, Any]:
-        """Keys: code, name, quantity, unit_price, subtotal."""
+        """Claves: code, name, quantity, unit_price, subtotal."""
         raise NotImplementedError("Flow 4: OrderItem.to_dict")
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "OrderItem":
-        """Ignores `subtotal` (it is recomputed)."""
+        """Ignora `subtotal` (se vuelve a calcular)."""
         raise NotImplementedError("Flow 4: OrderItem.from_dict")
 
 
 class Order:
-    """A customer's purchase.
+    """La compra de un cliente.
 
-    order_id       int > 0, read-only (property `id`)
-    customer_name  non-empty str, stored stripped
-    items          non-empty list of OrderItem
-    status         OrderStatus (the setter also accepts the plain string, e.g. "completed")
-    created_at     ISO-8601 string; if None, use now: datetime.now().isoformat(timespec="seconds")
-    ValueError on bad data.
+    order_id       int > 0, solo lectura (propiedad `id`)
+    customer_name  str no vacío, sin espacios en los extremos
+    items          lista no vacía de OrderItem
+    status         OrderStatus (el setter también acepta el string, por ejemplo "completed")
+    created_at     string ISO-8601; si es None, usar ahora: datetime.now().isoformat(timespec="seconds")
+    ValueError si algún dato es inválido.
     """
 
     def __init__(
@@ -90,7 +90,7 @@ class Order:
 
     @property
     def items(self) -> list[OrderItem]:
-        """A copy of the items list (callers must not be able to alter the order)."""
+        """Una copia de la lista de items (desde afuera no se debe poder alterar el pedido)."""
         raise NotImplementedError("Flow 4: Order.items")
 
     @property
@@ -107,11 +107,11 @@ class Order:
 
     @property
     def total(self) -> float:
-        """Sum of the item subtotals, rounded to 2 decimals."""
+        """Suma de los subtotales, redondeada a 2 decimales."""
         raise NotImplementedError("Flow 4: Order.total")
 
     def to_dict(self) -> dict[str, Any]:
-        """Keys: id, customer_name, status (plain string), created_at, items (list of dicts), total."""
+        """Claves: id, customer_name, status (string), created_at, items (lista de dicts), total."""
         raise NotImplementedError("Flow 4: Order.to_dict")
 
     @classmethod

@@ -39,7 +39,7 @@ def test_new_order_defaults():
     assert order.customer_name == "Ana"
     assert order.status is OrderStatus.PENDING
     assert order.total == 6980.0
-    datetime.fromisoformat(order.created_at)  # must be a valid ISO date
+    datetime.fromisoformat(order.created_at)  # tiene que ser una fecha ISO válida
 
 
 def test_items_returns_a_copy():

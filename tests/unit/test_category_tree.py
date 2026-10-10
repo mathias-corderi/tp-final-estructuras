@@ -38,7 +38,7 @@ def test_split_path_rejects_empty_segments(bad):
         split_path(bad)
 
 
-# --- nodes ---------------------------------------------------------------------
+# --- nodos ---------------------------------------------------------------------
 def test_node_children():
     root = CategoryNode("Store")
     child = root.add_child("A")
@@ -61,7 +61,7 @@ def test_node_path():
     assert node.parent.path == "A/B"
 
 
-# --- tree ----------------------------------------------------------------------
+# --- árbol ----------------------------------------------------------------------
 def test_new_tree_has_only_root():
     tree = CategoryTree()
     assert tree.root.name == "Store"
@@ -147,7 +147,7 @@ def test_rename_errors(tree):
     with pytest.raises(ValueError):
         tree.rename("", "X")
     with pytest.raises(ValueError):
-        tree.rename("A/B", "C")  # sibling exists
+        tree.rename("A/B", "C")  # ya existe un hermano con ese nombre
     with pytest.raises(ValueError):
         tree.rename("A/B", "X/Y")
 

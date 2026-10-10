@@ -1,9 +1,9 @@
-"""Stack (LIFO) — FLOW 2 (product administration).
+"""Pila (LIFO) — FLUJO 2 (administración de productos).
 
-Used by CatalogService to undo the last catalog operation.
+La usa CatalogService para deshacer la última operación sobre el catálogo.
 
-Implement it by hand. Storing the items in a Python list and only touching
-its end (append / pop) is fine. Do NOT use collections.deque or queue.LifoQueue.
+Implementala a mano. Guardar los elementos en una lista de Python y tocar
+solo su final (append / pop) está bien. NO uses collections.deque ni queue.LifoQueue.
 Tests: tests/unit/test_stack.py
 """
 
@@ -11,21 +11,21 @@ from typing import Any
 
 
 class Stack:
-    """Last-In, First-Out collection."""
+    """Colección Last-In, First-Out: el último que entra es el primero que sale."""
 
     def __init__(self) -> None:
         raise NotImplementedError("Flow 2: Stack.__init__")
 
     def push(self, item: Any) -> None:
-        """Put `item` on top of the stack."""
+        """Pone `item` en el tope de la pila."""
         raise NotImplementedError("Flow 2: Stack.push")
 
     def pop(self) -> Any:
-        """Remove and return the top item. Raise IndexError if the stack is empty."""
+        """Saca y devuelve el elemento del tope. IndexError si la pila está vacía."""
         raise NotImplementedError("Flow 2: Stack.pop")
 
     def peek(self) -> Any:
-        """Return the top item without removing it. Raise IndexError if empty."""
+        """Devuelve el elemento del tope sin sacarlo. IndexError si está vacía."""
         raise NotImplementedError("Flow 2: Stack.peek")
 
     def is_empty(self) -> bool:
@@ -35,5 +35,5 @@ class Stack:
         raise NotImplementedError("Flow 2: Stack.__len__")
 
     def to_list(self) -> list[Any]:
-        """Items from top to bottom (most recent first). Must not modify the stack."""
+        """Elementos del tope a la base (el más reciente primero). No debe modificar la pila."""
         raise NotImplementedError("Flow 2: Stack.to_list")

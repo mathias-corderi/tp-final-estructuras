@@ -1,19 +1,19 @@
-"""Shared fixtures. Every API test runs against a small, known store (FIXTURE_DATA)
-copied to a temporary file, never against data/store.json.
+"""Fixtures compartidas. Cada test de la API corre contra una tienda chica y conocida (FIXTURE_DATA)
+copiada a un archivo temporal, nunca contra data/store.json.
 
-The fixture catalog (codes in insertion order: 50, 30, 70, 20, 40, 60, 80, 10):
+El catálogo de prueba (códigos en orden de inserción: 50, 30, 70, 20, 40, 60, 80, 10):
 
-  code  name                    brand      price  stock  category               notes
+  code  name                    brand      price  stock  category               notas
   50    Coca-Cola 1.5L          Coca-Cola  2500   20     Grocery/Drinks/Sodas
-  30    Sprite 1.5L             Coca-Cola  2300   3      Grocery/Drinks/Sodas   low stock
+  30    Sprite 1.5L             Coca-Cola  2300   3      Grocery/Drinks/Sodas   stock bajo
   70    Villavicencio 2L        Danone     1200   15     Grocery/Drinks/Water
-  20    Pepsi 1.5L              PepsiCo    2200   10     Grocery/Drinks/Sodas   10 % off -> 1980
-  40    Lay's Classic 150g      PepsiCo    1800   0      Grocery/Snacks         low stock
+  20    Pepsi 1.5L              PepsiCo    2200   10     Grocery/Drinks/Sodas   10 % de descuento -> 1980
+  40    Lay's Classic 150g      PepsiCo    1800   0      Grocery/Snacks         stock bajo
   60    Oreo 118g               Mondelez   1500   25     Grocery/Snacks
   80    Ayudín Bleach 1L        Clorox     1100   8      Cleaning
-  10    Cepita Orange Juice 1L  Cepita     900    5      Grocery/Drinks         INACTIVE
+  10    Cepita Orange Juice 1L  Cepita     900    5      Grocery/Drinks         INACTIVO
 
-BST by code (insertion order above) has height 4:
+El BST por código (con el orden de inserción de arriba) tiene altura 4:
             50
          /      \\
        30        70
@@ -104,7 +104,7 @@ def app():
 
 @pytest.fixture
 def client(app, container):
-    """TestClient whose endpoints use the fixture store."""
+    """TestClient cuyos endpoints usan la tienda de prueba."""
     app.dependency_overrides[get_container] = lambda: container
     with TestClient(app) as test_client:
         yield test_client
@@ -113,7 +113,7 @@ def client(app, container):
 
 @pytest.fixture
 def bare_client(app):
-    """TestClient for tests that must not reach any service (e.g. auth checks)."""
+    """TestClient para tests que no deben llegar a ningún servicio (por ejemplo, los de autenticación)."""
 
     def no_container():
         raise AssertionError("This request should have been rejected before using the container")

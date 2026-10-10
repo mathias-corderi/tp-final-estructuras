@@ -1,4 +1,4 @@
-"""FLOW 1 — public catalog: listing (BST inorder), lookup (BST) and search (list)."""
+"""FLUJO 1 — catálogo público: listado (inorden del BST), búsqueda por código (BST) y búsqueda (lista)."""
 
 import pytest
 
@@ -38,7 +38,7 @@ def test_product_fields(client):
     }
 
 
-@pytest.mark.parametrize("code", [10, 999])  # 10 is inactive
+@pytest.mark.parametrize("code", [10, 999])  # el 10 está inactivo
 def test_get_missing_or_inactive_product_returns_404(client, code):
     response = client.get(f"/products/{code}")
     assert response.status_code == 404
@@ -78,7 +78,7 @@ def test_search_without_criteria_returns_422(client, params):
     [
         (50, True, 1, 1),
         (80, True, 7, 3),
-        (10, True, 8, 4),  # inactive products still live in the structures
+        (10, True, 8, 4),  # los inactivos siguen estando en las estructuras
         (999, False, 8, 3),
     ],
 )

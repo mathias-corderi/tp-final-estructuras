@@ -1,20 +1,20 @@
-"""Console options for categories — FLOW 3."""
+"""Opciones de consola de categorías — FLUJO 3."""
 
-from store.cli import prompts  # noqa: F401  (helpers you will need)
+from store.cli import prompts  # noqa: F401  (funciones que vas a necesitar)
 from store.container import Container
 
 
 def browse_categories(c: Container) -> None:
-    """"Explorar por categorías": print the tree indented by level with product counts
-    (like NodoCategoria.mostrar in the TP), then ask for a path and list its products."""
+    """"Explorar por categorías": imprime el árbol indentado por nivel con la cantidad de productos
+    (como NodoCategoria.mostrar de la consigna), después pide una ruta y lista sus productos."""
     raise NotImplementedError("Flow 3: browse_categories (console)")
 
 
 def manage_categories(c: Container) -> None:
-    """Submenu: 1) create  2) rename  3) delete."""
+    """Submenú: 1) crear  2) renombrar  3) borrar."""
     raise NotImplementedError("Flow 3: manage_categories (console)")
 
 
 def price_adjustment(c: Container) -> None:
-    """Ask for a path and a percent, show how many products will change, confirm, apply."""
+    """Pide una ruta y un porcentaje, muestra cuántos productos van a cambiar, pide confirmación y aplica."""
     raise NotImplementedError("Flow 3: price_adjustment (console)")

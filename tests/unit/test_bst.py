@@ -33,12 +33,12 @@ def test_inorder_returns_values_sorted_by_key():
 @pytest.mark.parametrize(
     "key, expected",
     [
-        (50, ("v50", 1)),  # root
+        (50, ("v50", 1)),  # raíz
         (30, ("v30", 2)),
         (20, ("v20", 3)),
         (80, ("v80", 3)),
-        (65, (None, 3)),  # 50 -> 70 -> 60 -> falls off
-        (99, (None, 3)),  # 50 -> 70 -> 80 -> falls off
+        (65, (None, 3)),  # 50 -> 70 -> 60 -> se sale del árbol
+        (99, (None, 3)),  # 50 -> 70 -> 80 -> se sale del árbol
         (1, (None, 3)),
     ],
 )
@@ -89,7 +89,7 @@ def test_delete_leaf():
 
 def test_delete_node_with_one_child():
     tree = build(BALANCED + [10])
-    assert tree.delete(20) is True  # 20 only has the left child 10
+    assert tree.delete(20) is True  # el 20 solo tiene el hijo izquierdo 10
     assert tree.inorder() == ["v10", "v30", "v40", "v50", "v60", "v70", "v80"]
     assert tree.search(10) == ("v10", 3)
 

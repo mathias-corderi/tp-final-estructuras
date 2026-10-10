@@ -1,4 +1,4 @@
-"""Request/response shapes for the cart and orders (Flow 4). Part of the contract — already implemented."""
+"""Formas de request/response del carrito y los pedidos (Flujo 4). Parte del contrato — ya implementado."""
 
 from pydantic import BaseModel, ConfigDict, Field
 

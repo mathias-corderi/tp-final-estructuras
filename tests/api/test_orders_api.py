@@ -1,4 +1,4 @@
-"""FLOW 4 — cart quote, orders and the FIFO queue of pending orders."""
+"""FLUJO 4 — cotización del carrito, pedidos y la cola FIFO de pedidos pendientes."""
 
 import pytest
 
@@ -16,7 +16,7 @@ def place(client, items, customer="Ana"):
     return client.post("/orders", json=body)
 
 
-# --- quote ---------------------------------------------------------------------
+# --- cotizar ---------------------------------------------------------------------
 def test_quote_prices_available_lines_and_lists_the_rest(client):
     body = {"items": [{"code": 50, "quantity": 2}, {"code": 40, "quantity": 1}, {"code": 999, "quantity": 1}]}
     response = client.post("/cart/quote", json=body)
@@ -29,7 +29,7 @@ def test_quote_prices_available_lines_and_lists_the_rest(client):
             {"code": 999, "requested": 1, "available": 0, "reason": "not_found"},
         ],
     }
-    assert stock(client, 50) == 20  # nothing reserved
+    assert stock(client, 50) == 20  # no se reservó nada
 
 
 def test_quote_merges_codes_and_applies_discounts(client):
@@ -50,7 +50,7 @@ def test_quote_invalid_body(client, body):
     assert client.post("/cart/quote", json=body).status_code == 422
 
 
-# --- place order ---------------------------------------------------------------
+# --- hacer pedido ---------------------------------------------------------------
 def test_place_order_reserves_stock(client):
     response = place(client, [(50, 2), (20, 1)])
     assert response.status_code == 201
@@ -78,7 +78,7 @@ def test_order_keeps_price_at_purchase_time(client, admin_headers):
 
 
 def test_insufficient_stock_reserves_nothing(client):
-    response = place(client, [(50, 2), (30, 4)])  # only 3 Sprites
+    response = place(client, [(50, 2), (30, 4)])  # solo hay 3 Sprite
     assert response.status_code == 409
     assert (stock(client, 50), stock(client, 30)) == (20, 3)
     assert client.get("/orders/1").status_code == 404
@@ -90,7 +90,7 @@ def test_repeated_codes_are_merged_before_checking_stock(client):
     assert stock(client, 30) == 0
 
 
-@pytest.mark.parametrize("code", [999, 10])  # unknown and inactive
+@pytest.mark.parametrize("code", [999, 10])  # inexistente e inactivo
 def test_order_with_unavailable_product_returns_404(client, code):
     assert place(client, [(50, 1), (code, 1)]).status_code == 404
     assert stock(client, 50) == 20
@@ -119,7 +119,7 @@ def test_track_order(client):
     assert client.get("/orders/999").status_code == 404
 
 
-# --- admin: list, complete, cancel ---------------------------------------------
+# --- admin: listar, completar, cancelar ---------------------------------------------
 def test_admin_list_orders_with_filter(client, admin_headers):
     place(client, [(60, 1)])
     place(client, [(70, 1)])
@@ -142,7 +142,7 @@ def test_complete_next_is_fifo(client, admin_headers):
     second = client.post("/admin/orders/next/complete", headers=admin_headers).json()
     assert second["id"] == 2
     assert client.post("/admin/orders/next/complete", headers=admin_headers).status_code == 409
-    assert stock(client, 60) == 24  # completing doesn't touch stock again
+    assert stock(client, 60) == 24  # completar no vuelve a tocar el stock
 
 
 def test_cancel_returns_stock_and_leaves_the_queue(client, admin_headers):
@@ -158,7 +158,7 @@ def test_cancel_returns_stock_and_leaves_the_queue(client, admin_headers):
 def test_cancel_errors(client, admin_headers):
     place(client, [(60, 1)])
     place(client, [(60, 1)])
-    client.post("/admin/orders/next/complete", headers=admin_headers)  # order 1 completed
+    client.post("/admin/orders/next/complete", headers=admin_headers)  # pedido 1 completado
     client.post("/admin/orders/2/cancel", headers=admin_headers)
     assert client.post("/admin/orders/1/cancel", headers=admin_headers).status_code == 409
     assert client.post("/admin/orders/2/cancel", headers=admin_headers).status_code == 409

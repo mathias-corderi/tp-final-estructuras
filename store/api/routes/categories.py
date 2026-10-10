@@ -1,4 +1,4 @@
-"""Public category endpoints — FLOW 3.
+"""Endpoints públicos de categorías — FLUJO 3.
 Tests: tests/api/test_categories_api.py
 """
 
@@ -14,7 +14,7 @@ router = APIRouter(prefix="/categories", tags=["categories"])
 
 @router.get("", response_model=CategoryNodeOut)
 def get_category_tree(c: Container = Depends(get_container)):
-    """The whole category tree, nested, with the number of active products under each node."""
+    """El árbol de categorías completo, anidado, con la cantidad de productos activos debajo de cada nodo."""
     raise NotImplementedError("Flow 3: GET /categories")
 
 
@@ -24,5 +24,5 @@ def products_in_category(
     include_subcategories: bool = True,
     c: Container = Depends(get_container),
 ):
-    """Active products of a category (and its subcategories, in preorder). 404 if the path doesn't exist."""
+    """Productos activos de una categoría (y sus subcategorías, en preorden). 404 si la ruta no existe."""
     raise NotImplementedError("Flow 3: GET /categories/products")

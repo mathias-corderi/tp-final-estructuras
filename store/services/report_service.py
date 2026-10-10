@@ -1,8 +1,8 @@
-"""Reports for the owner — FLOW 5 (reports, settings and persistence).
+"""Reportes para el dueño — FLUJO 5 (reportes, configuración y persistencia).
 
-Read-only: it walks the other services' data and never changes it.
-The owner sees EVERYTHING (inactive products too) unless a method says otherwise.
-Round every money amount to 2 decimals.
+Solo lectura: recorre los datos de los otros servicios y nunca los modifica.
+El dueño ve TODO (también los productos inactivos), salvo que un método diga otra cosa.
+Redondear todos los montos a 2 decimales.
 """
 
 from typing import Any
@@ -28,42 +28,42 @@ class ReportService:
 
     def summary(self) -> dict[str, Any]:
         """{
-          "revenue": sum of COMPLETED order totals,
+          "revenue": suma de los totales de los pedidos COMPLETADOS,
           "orders": {"pending": n, "completed": n, "cancelled": n},
-          "average_ticket": revenue / completed orders (0.0 if none),
-          "inventory_value": sum of price * stock over ALL products (list price, no discount),
-          "product_count": number of products (inactive too)
+          "average_ticket": revenue / pedidos completados (0.0 si no hay),
+          "inventory_value": suma de price * stock de TODOS los productos (precio de lista, sin descuento),
+          "product_count": cantidad de productos (también los inactivos)
         }"""
         raise NotImplementedError("Flow 5: ReportService.summary")
 
     def best_sellers(self, limit: int = 10) -> list[dict[str, Any]]:
-        """Ranking over COMPLETED orders: [{"code", "name", "units_sold", "revenue"}, ...].
+        """Ranking sobre los pedidos COMPLETADOS: [{"code", "name", "units_sold", "revenue"}, ...].
 
-        Order: units_sold descending, then code ascending. limit < 1 -> ValidationError.
+        Orden: units_sold descendente y después code ascendente. limit < 1 -> ValidationError.
         """
         raise NotImplementedError("Flow 5: ReportService.best_sellers")
 
     def low_stock(self) -> list[Product]:
-        """ACTIVE products with stock <= min_stock, ordered by stock then code."""
+        """Productos ACTIVOS con stock <= min_stock, ordenados por stock y después por código."""
         raise NotImplementedError("Flow 5: ReportService.low_stock")
 
     def categories(self) -> dict[str, Any]:
         """{
           "tree_depth": tree.depth(),
           "bst_height_by_code": ..., "bst_height_by_name": ...,     # catalog.tree_heights()
-          "categories": [{"path", "product_count", "stock_value"}, ...]   # every path, preorder,
-        }                                                           # counting the whole subtree"""
+          "categories": [{"path", "product_count", "stock_value"}, ...]   # todas las rutas, en preorden,
+        }                                                           # contando el subárbol completo"""
         raise NotImplementedError("Flow 5: ReportService.categories")
 
     def searches(self, limit: int = 5) -> dict[str, Any]:
-        """{"recent": [...most recent first], "top_terms": [{"term", "count"}, ...]}"""
+        """{"recent": [...la más reciente primero], "top_terms": [{"term", "count"}, ...]}"""
         raise NotImplementedError("Flow 5: ReportService.searches")
 
     def export_catalog(self) -> str:
-        """Plain-text catalog of ACTIVE products sorted by name (use the BST via catalog.list_products).
+        """Catálogo en texto plano de los productos ACTIVOS ordenados por nombre (usar el BST vía catalog.list_products).
 
-        Line 1: "<store_name> — Catalog (<n> products)", line 2 blank, then one line per product:
+        Línea 1: "<store_name> — Catalog (<n> products)", línea 2 en blanco, después una línea por producto:
             "80 | Ayudín Bleach 1L | Clorox | Cleaning | ARS 1100.00 | stock 8"
-        (code | name | brand | category | currency final_price | stock), ending with a newline.
+        (código | nombre | marca | categoría | moneda precio_final | stock), terminando con un salto de línea.
         """
         raise NotImplementedError("Flow 5: ReportService.export_catalog")

@@ -1,12 +1,12 @@
-"""Store settings — FLOW 5 (reports, settings and persistence).
+"""Configuración de la tienda — FLUJO 5 (reportes, configuración y persistencia).
 
-What the owner can configure about the store itself.
+Lo que el dueño puede configurar de la tienda.
 
-  store_name           non-empty str, stored stripped
-  currency             3 letters, stored uppercase ("usd" -> "USD")
-  default_min_stock    int >= 0, used when a product is created without min_stock
-  search_history_size  int between 1 and 100, how many searches are remembered
-ValueError on bad data (`bool` is not a valid int).
+  store_name           str no vacío, sin espacios en los extremos
+  currency             3 letras, se guarda en mayúsculas ("usd" -> "USD")
+  default_min_stock    int >= 0, se usa cuando se crea un producto sin min_stock
+  search_history_size  int entre 1 y 100, cuántas búsquedas se recuerdan
+ValueError si algún dato es inválido (`bool` no cuenta como int válido).
 Tests: tests/unit/test_settings_model.py
 """
 
@@ -58,18 +58,18 @@ class StoreSettings:
         raise NotImplementedError("Flow 5: StoreSettings.search_history_size setter")
 
     def update(self, **changes: Any) -> None:
-        """Change several fields at once, *all or nothing*.
+        """Cambia varios campos a la vez, *todo o nada*.
 
-        Unknown field -> ValueError. If any value is invalid, raise ValueError and
-        leave EVERY field unchanged (validate everything before assigning anything).
+        Campo desconocido -> ValueError. Si algún valor es inválido, lanza ValueError
+        y deja TODOS los campos como estaban (validar todo antes de asignar nada).
         """
         raise NotImplementedError("Flow 5: StoreSettings.update")
 
     def to_dict(self) -> dict[str, Any]:
-        """Keys: the four FIELDS."""
+        """Claves: los cuatro FIELDS."""
         raise NotImplementedError("Flow 5: StoreSettings.to_dict")
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "StoreSettings":
-        """Missing keys take the constructor defaults."""
+        """Las claves que falten toman los valores por defecto del constructor."""
         raise NotImplementedError("Flow 5: StoreSettings.from_dict")

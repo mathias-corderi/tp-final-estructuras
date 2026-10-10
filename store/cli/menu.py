@@ -1,9 +1,9 @@
-"""Main console menu. Shared code — already implemented.
+"""Menú principal de la consola. Código compartido — ya implementado.
 
-Each option calls a function `handler(container)` that lives in the menu file
-of its flow (catalog_menu.py, category_menu.py, ...). Those handlers are what
-each member implements. Business errors (StoreError) are printed here, so
-handlers don't need to catch them.
+Cada opción llama a una función `handler(container)` que está en el archivo de
+menú de su flujo (catalog_menu.py, category_menu.py, ...). Esos handlers son los
+que implementa cada integrante. Los errores de negocio (StoreError) se imprimen
+acá, así que los handlers no necesitan atraparlos.
 """
 
 from typing import Callable
@@ -35,7 +35,7 @@ class ConsoleApp:
         except NotImplementedError:
             return "STORE"
 
-    # --- menus -------------------------------------------------------------------
+    # --- menús -------------------------------------------------------------------
     def main_menu(self) -> MenuEntries:
         flow = self.flow
         return [
@@ -77,7 +77,7 @@ class ConsoleApp:
 
     # --- loop --------------------------------------------------------------------
     def flow(self, handler: Handler) -> Action:
-        """Wrap a flow handler: give it the container, print errors, then pause."""
+        """Envuelve el handler de un flujo: le pasa el container, imprime los errores y después pausa."""
 
         def action() -> None:
             try:

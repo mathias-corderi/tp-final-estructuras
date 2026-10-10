@@ -1,8 +1,8 @@
-"""Builds and wires every service once. Shared code — already implemented.
+"""Arma y conecta todos los servicios una sola vez. Código compartido — ya implementado.
 
-Both the API and the console use a Container, so they share the exact same
-logic. It also knows how to turn the whole store into the JSON format of
-JsonStorage and back.
+La API y la consola usan un Container, así que comparten exactamente la misma
+lógica. También sabe convertir toda la tienda al formato JSON de JsonStorage
+y viceversa.
 """
 
 import shutil
@@ -39,7 +39,7 @@ class Container:
         )
 
     def load(self) -> "Container":
-        """Load the JSON file (copying the seed first if the file doesn't exist yet)."""
+        """Carga el archivo JSON (si todavía no existe, primero copia el seed)."""
         path = self.storage.path
         if not path.exists() and self._seed_path is not None and self._seed_path.exists():
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -69,5 +69,5 @@ class Container:
 
 
 def build_default_container() -> Container:
-    """Container over the real data file (data/store.json, created from data/seed.json)."""
+    """Container sobre el archivo real (data/store.json, creado a partir de data/seed.json)."""
     return Container(config.data_path(), seed_path=config.SEED_PATH).load()

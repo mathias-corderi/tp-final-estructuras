@@ -1,15 +1,15 @@
-"""Business errors raised by the services.
+"""Errores de negocio que lanzan los servicios.
 
-Services never return HTTP codes or print messages: they raise one of these.
-The API turns them into a response with `status_code` and {"detail": message};
-the console prints the message.
+Los servicios nunca devuelven códigos HTTP ni imprimen mensajes: lanzan uno de estos.
+La API los convierte en una respuesta con `status_code` y {"detail": mensaje};
+la consola imprime el mensaje.
 
-Usage:  raise ProductNotFound(f"Product {code} not found")
+Uso:  raise ProductNotFound(f"Product {code} not found")
 """
 
 
 class StoreError(Exception):
-    """Base class for every business error."""
+    """Clase base de todos los errores de negocio."""
 
     status_code = 400
 
@@ -23,7 +23,7 @@ class ConflictError(StoreError):
 
 
 class ValidationError(StoreError):
-    """Invalid input that passed the API schema but breaks a business rule."""
+    """Dato inválido que pasó el schema de la API pero rompe una regla de negocio."""
 
     status_code = 422
 

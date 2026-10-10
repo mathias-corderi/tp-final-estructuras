@@ -1,4 +1,4 @@
-"""Response shapes for reports and settings (Flow 5). Part of the contract — already implemented."""
+"""Formas de response de reportes y configuración (Flujo 5). Parte del contrato — ya implementado."""
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -57,7 +57,7 @@ class SettingsOut(BaseModel):
 
 
 class SettingsUpdate(BaseModel):
-    """Only the fields sent are changed (model_dump(exclude_unset=True))."""
+    """Solo cambian los campos enviados (model_dump(exclude_unset=True))."""
 
     model_config = ConfigDict(extra="forbid")
 

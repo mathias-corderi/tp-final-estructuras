@@ -1,4 +1,4 @@
-"""Console entry point:  python main.py"""
+"""Punto de entrada de la consola:  python main.py"""
 
 from store.cli.menu import ConsoleApp
 

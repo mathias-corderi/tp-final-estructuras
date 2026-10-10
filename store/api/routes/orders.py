@@ -1,4 +1,4 @@
-"""Public cart and order endpoints — FLOW 4.
+"""Endpoints públicos del carrito y los pedidos — FLUJO 4.
 Tests: tests/api/test_orders_api.py
 """
 
@@ -13,17 +13,17 @@ router = APIRouter(tags=["orders"])
 
 @router.post("/cart/quote", response_model=QuoteOut)
 def quote_cart(body: QuoteIn, c: Container = Depends(get_container)):
-    """Price a cart without buying: lines with discounts applied, total, and what is unavailable."""
+    """Cotiza un carrito sin comprar: líneas con descuentos aplicados, total y lo que no está disponible."""
     raise NotImplementedError("Flow 4: POST /cart/quote")
 
 
 @router.post("/orders", response_model=OrderOut, status_code=201)
 def place_order(body: OrderIn, c: Container = Depends(get_container)):
-    """Buy: creates a PENDING order and reserves its stock. 409 not enough stock, 404 unknown product."""
+    """Comprar: crea un pedido PENDING y reserva su stock. 409 falta stock, 404 producto inexistente."""
     raise NotImplementedError("Flow 4: POST /orders")
 
 
 @router.get("/orders/{order_id}", response_model=OrderOut)
 def get_order(order_id: int, c: Container = Depends(get_container)):
-    """Order status, so the customer can track it. 404 if missing."""
+    """Estado del pedido, para que el cliente lo siga. 404 si no existe."""
     raise NotImplementedError("Flow 4: GET /orders/{order_id}")

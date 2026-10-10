@@ -1,4 +1,4 @@
-"""Reports and export endpoints — FLOW 5. Require X-Admin-Token (already wired).
+"""Endpoints de reportes y exportación — FLUJO 5. Requieren X-Admin-Token (ya está conectado).
 Tests: tests/api/test_reports_api.py
 """
 
@@ -20,35 +20,35 @@ router = APIRouter(prefix="/admin", tags=["admin: reports"], dependencies=[Depen
 
 @router.get("/reports/summary", response_model=SummaryOut)
 def sales_summary(c: Container = Depends(get_container)):
-    """Revenue, orders by status, average ticket and inventory value."""
+    """Facturación, pedidos por estado, ticket promedio y valor del inventario."""
     raise NotImplementedError("Flow 5: GET /admin/reports/summary")
 
 
 @router.get("/reports/best-sellers", response_model=list[BestSellerOut])
 def best_sellers(limit: int = Query(default=10, ge=1), c: Container = Depends(get_container)):
-    """Products ranked by units sold in completed orders."""
+    """Productos ordenados por unidades vendidas en pedidos completados."""
     raise NotImplementedError("Flow 5: GET /admin/reports/best-sellers")
 
 
 @router.get("/reports/low-stock", response_model=list[ProductOut])
 def low_stock(c: Container = Depends(get_container)):
-    """Active products at or below their minimum stock: what to restock."""
+    """Productos activos con stock en el mínimo o por debajo: lo que hay que reponer."""
     raise NotImplementedError("Flow 5: GET /admin/reports/low-stock")
 
 
 @router.get("/reports/categories", response_model=CategoriesReportOut)
 def categories_report(c: Container = Depends(get_container)):
-    """Products and stock value per category, plus tree depth and BST heights."""
+    """Productos y valor de stock por categoría, más la profundidad del árbol y la altura de los BST."""
     raise NotImplementedError("Flow 5: GET /admin/reports/categories")
 
 
 @router.get("/reports/searches", response_model=SearchesReportOut)
 def searches_report(c: Container = Depends(get_container)):
-    """Recent customer searches and the most searched terms."""
+    """Últimas búsquedas de los clientes y los términos más buscados."""
     raise NotImplementedError("Flow 5: GET /admin/reports/searches")
 
 
 @router.get("/export/catalog", response_class=PlainTextResponse)
 def export_catalog(c: Container = Depends(get_container)):
-    """The catalog sorted by name as plain text."""
+    """El catálogo ordenado por nombre, en texto plano."""
     raise NotImplementedError("Flow 5: GET /admin/export/catalog")

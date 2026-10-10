@@ -1,4 +1,4 @@
-"""Store settings service — FLOW 5 (reports, settings and persistence)."""
+"""Servicio de configuración de la tienda — FLUJO 5 (reportes, configuración y persistencia)."""
 
 from typing import Any, Callable
 
@@ -19,10 +19,10 @@ class SettingsService:
         raise NotImplementedError("Flow 5: SettingsService.get")
 
     def update(self, changes: dict[str, Any]) -> StoreSettings:
-        """Apply `changes` (all or nothing) and persist.
+        """Aplica `changes` (todo o nada) y guarda.
 
-        - Empty `changes`, unknown field or invalid value -> errors.ValidationError.
-        - If search_history_size changed, resize the search history too.
-        - Call on_change() after a successful update.
+        - `changes` vacío, campo desconocido o valor inválido -> errors.ValidationError.
+        - Si cambió search_history_size, también hay que redimensionar el historial.
+        - Llamar a on_change() después de un cambio exitoso.
         """
         raise NotImplementedError("Flow 5: SettingsService.update")

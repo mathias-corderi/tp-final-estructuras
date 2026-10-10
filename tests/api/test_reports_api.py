@@ -1,4 +1,4 @@
-"""FLOW 5 — owner reports, search history and export."""
+"""FLUJO 5 — reportes del dueño, historial de búsquedas y exportación."""
 
 import re
 
@@ -21,7 +21,7 @@ def test_summary_without_orders(client, admin_headers):
         "revenue": 0.0,
         "orders": {"pending": 0, "completed": 0, "cancelled": 0},
         "average_ticket": 0.0,
-        "inventory_value": 147700.0,  # price * stock of all 8 products, inactive included
+        "inventory_value": 147700.0,  # precio * stock de los 8 productos, inactivo incluido
         "product_count": 8,
     }
 
@@ -36,13 +36,13 @@ def test_summary_with_orders(client, admin_headers):
     assert summary["revenue"] == 6980.0
     assert summary["orders"] == {"pending": 1, "completed": 1, "cancelled": 1}
     assert summary["average_ticket"] == 6980.0
-    assert summary["inventory_value"] == 139000.0  # 147700 - 5000 - 2200 - 1500 (cancelled stock came back)
+    assert summary["inventory_value"] == 139000.0  # 147700 - 5000 - 2200 - 1500 (el stock del cancelado volvió)
 
 
 def test_best_sellers_counts_completed_orders_only(client, admin_headers):
     place(client, [(50, 2), (20, 1)])
     place(client, [(50, 1), (60, 3)])
-    place(client, [(70, 5)])  # stays pending
+    place(client, [(70, 5)])  # queda pendiente
     client.post("/admin/orders/next/complete", headers=admin_headers)
     client.post("/admin/orders/next/complete", headers=admin_headers)
 

@@ -1,4 +1,4 @@
-"""Small helpers shared by the tests."""
+"""Funciones chicas que comparten los tests."""
 
 from types import SimpleNamespace
 
@@ -9,5 +9,5 @@ def codes(items):
 
 
 def item(code, name="Item", brand="Brand"):
-    """Stand-in for a Product in structure tests (only code, name and brand)."""
+    """Reemplazo de un Product para los tests de estructuras (solo code, name y brand)."""
     return SimpleNamespace(code=code, name=name, brand=brand)

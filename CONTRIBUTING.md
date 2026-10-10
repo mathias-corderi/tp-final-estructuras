@@ -32,7 +32,7 @@ Si al probar la API ves `501 Not implemented yet: Flow 4: ...`, todavía falta e
    - `structures/` no importa nada del proyecto.
    - `services/` lanza errores de `store/errors.py`; nunca devuelve `None` para decir "no encontrado".
    - `api/` y `cli/` no tienen lógica: llaman a los servicios.
-4. **Todo en inglés en el código:** variables, funciones, clases, endpoints, campos JSON y mensajes. La documentación para la cátedra va en español.
+4. **Idioma:** el código va en inglés (variables, funciones, clases, endpoints, campos JSON y mensajes de error). Los comentarios, los docstrings y la documentación van en español.
 5. **Tenés que poder explicar todo lo que subís.** En la defensa preguntan sobre cualquier parte del código.
 
 ## Git

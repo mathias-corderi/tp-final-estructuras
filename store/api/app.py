@@ -1,6 +1,6 @@
-"""FastAPI application. Shared code — already implemented.
+"""Aplicación FastAPI. Código compartido — ya implementado.
 
-Run it with:  uvicorn store.api.app:app --reload     (docs at http://127.0.0.1:8000/docs)
+Se levanta con:  uvicorn store.api.app:app --reload     (documentación en http://127.0.0.1:8000/docs)
 """
 
 from fastapi import FastAPI, Request
@@ -19,10 +19,10 @@ from store.api.routes import (
 from store.errors import StoreError
 
 DESCRIPTION = """
-Store API — TP Final Estructuras de Datos.
+API de la tienda — TP Final Estructuras de Datos.
 
-Public endpoints are for customers. Every `/admin/*` endpoint requires the
-`X-Admin-Token` header (env var `STORE_ADMIN_TOKEN`, `change-me` by default).
+Los endpoints públicos son para los clientes. Todo endpoint `/admin/*` requiere el
+header `X-Admin-Token` (variable de entorno `STORE_ADMIN_TOKEN`, por defecto `change-me`).
 """
 
 

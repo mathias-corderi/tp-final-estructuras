@@ -1,18 +1,18 @@
-"""Category tree (n-ary) — FLOW 3 (categories).
+"""Árbol de categorías (n-ario) — FLUJO 3 (categorías).
 
-Each node is a category that can have any number of subcategories, and the
-products ("items") hang from the node of their category:
+Cada nodo es una categoría que puede tener cualquier cantidad de subcategorías,
+y los productos ("items") cuelgan del nodo de su categoría:
 
-    Store                      <- root, path ""
-    ├── Grocery                <- path "Grocery"
-    │   ├── Drinks             <- path "Grocery/Drinks"
+    Store                      <- raíz, ruta ""
+    ├── Grocery                <- ruta "Grocery"
+    │   ├── Drinks             <- ruta "Grocery/Drinks"
     │   │   └── Sodas  -> [Coca-Cola, Sprite]
     │   └── Snacks     -> [Oreo]
     └── Cleaning       -> [Bleach]
 
-Paths are names joined with "/", without the root. Names are case-sensitive.
-Items are compared with `==` (Products are equal when their codes are equal).
-Children and items keep insertion order.
+Las rutas son nombres unidos con "/", sin la raíz. Los nombres distinguen mayúsculas.
+Los items se comparan con `==` (dos Product son iguales si tienen el mismo código).
+Hijos e items mantienen el orden de inserción.
 Tests: tests/unit/test_category_tree.py
 """
 
@@ -20,11 +20,11 @@ from typing import Any, Callable
 
 
 def split_path(path: str) -> list[str]:
-    """Turn "Grocery / Drinks" into ["Grocery", "Drinks"].
+    """Convierte "Grocery / Drinks" en ["Grocery", "Drinks"].
 
-    - Each segment is stripped.
-    - A blank path ("" or "   ") means the root -> [].
-    - An empty segment ("A//B", "/A", "A/") -> ValueError.
+    - A cada segmento se le sacan los espacios de los extremos.
+    - Una ruta en blanco ("" o "   ") es la raíz -> [].
+    - Un segmento vacío ("A//B", "/A", "A/") -> ValueError.
     """
     raise NotImplementedError("Flow 3: split_path")
 
@@ -38,22 +38,22 @@ class CategoryNode:
 
     @property
     def path(self) -> str:
-        """Full path from the root: "" for the root, "Grocery/Drinks" for a nested node."""
+        """Ruta completa desde la raíz: "" para la raíz, "Grocery/Drinks" para un nodo anidado."""
         raise NotImplementedError("Flow 3: CategoryNode.path")
 
     def find_child(self, name: str) -> "CategoryNode | None":
         raise NotImplementedError("Flow 3: CategoryNode.find_child")
 
     def add_child(self, name: str) -> "CategoryNode":
-        """Create, append and return a new child.
+        """Crea, agrega y devuelve un hijo nuevo.
 
-        ValueError if a child with that name already exists, or if the name is
-        empty or contains "/".
+        ValueError si ya existe un hijo con ese nombre, o si el nombre está vacío
+        o contiene "/".
         """
         raise NotImplementedError("Flow 3: CategoryNode.add_child")
 
     def remove_child(self, name: str) -> bool:
-        """Remove the child (and its whole subtree). Return False if missing."""
+        """Elimina el hijo (con todo su subárbol). False si no existe."""
         raise NotImplementedError("Flow 3: CategoryNode.remove_child")
 
 
@@ -64,65 +64,64 @@ class CategoryTree:
         self.root = CategoryNode(self.ROOT_NAME)
 
     def find(self, path: str) -> CategoryNode | None:
-        """Node at `path` ("" -> root), or None if it doesn't exist."""
+        """Nodo en `path` ("" -> raíz), o None si no existe."""
         raise NotImplementedError("Flow 3: CategoryTree.find")
 
     def exists(self, path: str) -> bool:
         raise NotImplementedError("Flow 3: CategoryTree.exists")
 
     def add_path(self, path: str) -> CategoryNode:
-        """Create every missing node along `path` and return the last one.
+        """Crea todos los nodos que falten a lo largo de `path` y devuelve el último.
 
-        If the whole path already exists, nothing changes and the existing node
-        is returned.
+        Si la ruta ya existe completa, no cambia nada y devuelve el nodo existente.
         """
         raise NotImplementedError("Flow 3: CategoryTree.add_path")
 
     def remove(self, path: str) -> bool:
-        """Remove the node and its subtree. False if missing. ValueError for the root."""
+        """Elimina el nodo y su subárbol. False si no existe. ValueError para la raíz."""
         raise NotImplementedError("Flow 3: CategoryTree.remove")
 
     def rename(self, path: str, new_name: str) -> CategoryNode:
-        """Rename the node at `path` (its descendants' paths change with it).
+        """Renombra el nodo en `path` (las rutas de sus descendientes cambian con él).
 
-        KeyError if missing. ValueError for the root, an invalid name, or if a
-        sibling already has `new_name`.
+        KeyError si no existe. ValueError para la raíz, para un nombre inválido o
+        si un hermano ya se llama `new_name`.
         """
         raise NotImplementedError("Flow 3: CategoryTree.rename")
 
     def add_item(self, path: str, item: Any) -> None:
-        """Append `item` to the node at `path`. KeyError if the path doesn't exist."""
+        """Agrega `item` al nodo en `path`. KeyError si la ruta no existe."""
         raise NotImplementedError("Flow 3: CategoryTree.add_item")
 
     def remove_item(self, path: str, item: Any) -> bool:
-        """Remove the first item == `item` from that node. False if node or item is missing."""
+        """Saca de ese nodo el primer item == `item`. False si falta el nodo o el item."""
         raise NotImplementedError("Flow 3: CategoryTree.remove_item")
 
     def items(self, path: str = "", include_subcategories: bool = True) -> list[Any]:
-        """Items of the node at `path`, KeyError if it doesn't exist.
+        """Items del nodo en `path`; KeyError si no existe.
 
-        With include_subcategories, walk the subtree in *preorder*: the node's own
-        items first, then each child (in insertion order) recursively.
+        Con include_subcategories, recorre el subárbol en *preorden*: primero los
+        items del propio nodo y después cada hijo (en orden de inserción) recursivamente.
         """
         raise NotImplementedError("Flow 3: CategoryTree.items")
 
     def count(self, path: str = "", item_filter: Callable[[Any], bool] | None = None) -> int:
-        """Number of items in the subtree at `path` that pass `item_filter` (all if None)."""
+        """Cantidad de items del subárbol en `path` que pasan `item_filter` (todos si es None)."""
         raise NotImplementedError("Flow 3: CategoryTree.count")
 
     def depth(self) -> int:
-        """Levels below the root: only root -> 0, "A" -> 1, "A/B/C" -> 3."""
+        """Niveles debajo de la raíz: solo raíz -> 0, "A" -> 1, "A/B/C" -> 3."""
         raise NotImplementedError("Flow 3: CategoryTree.depth")
 
     def paths(self) -> list[str]:
-        """Every category path in preorder, root excluded: ["A", "A/B", "A/C", "D"]."""
+        """Todas las rutas en preorden, sin la raíz: ["A", "A/B", "A/C", "D"]."""
         raise NotImplementedError("Flow 3: CategoryTree.paths")
 
     def to_dict(self, path: str = "", item_filter: Callable[[Any], bool] | None = None) -> dict:
-        """Nested representation of the subtree at `path` (KeyError if missing):
+        """Representación anidada del subárbol en `path` (KeyError si no existe):
 
         {"name": "Store", "path": "", "product_count": 7, "children": [ {...}, ... ]}
 
-        product_count = items in the node AND all its descendants that pass `item_filter`.
+        product_count = items del nodo Y de todos sus descendientes que pasan `item_filter`.
         """
         raise NotImplementedError("Flow 3: CategoryTree.to_dict")

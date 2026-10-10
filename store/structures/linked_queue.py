@@ -1,12 +1,12 @@
-"""Queue (FIFO) built with linked nodes — FLOW 4 (orders).
+"""Cola (FIFO) con nodos enlazados — FLUJO 4 (pedidos).
 
-Used for:
-  - pending orders: the owner always processes the oldest one first (Flow 4);
-  - search history: a *bounded* queue that keeps the last N searches (Flow 5).
+Se usa para:
+  - los pedidos pendientes: el dueño siempre atiende primero el más viejo (Flujo 4);
+  - el historial de búsquedas: una cola *acotada* que guarda las últimas N (Flujo 5).
 
-Implement it with `_Node` objects and references to the front and the back,
-so enqueue and dequeue are O(1). Do NOT use a Python list, collections.deque
-or queue.Queue.
+Implementala con objetos `_Node` y referencias al frente y al final, para que
+encolar y desencolar sean O(1). NO uses una lista de Python, collections.deque
+ni queue.Queue.
 Tests: tests/unit/test_linked_queue.py
 """
 
@@ -14,7 +14,7 @@ from typing import Any, Callable
 
 
 class _Node:
-    """One element of the queue. Already implemented."""
+    """Un elemento de la cola. Ya está implementado."""
 
     __slots__ = ("value", "next")
 
@@ -24,9 +24,9 @@ class _Node:
 
 
 class Queue:
-    """First-In, First-Out collection, optionally bounded.
+    """Colección First-In, First-Out, opcionalmente con tamaño máximo.
 
-    `max_size=None` means unbounded. If given it must be >= 1 (ValueError otherwise).
+    `max_size=None` significa sin límite. Si se indica, tiene que ser >= 1 (si no, ValueError).
     """
 
     def __init__(self, max_size: int | None = None) -> None:
@@ -37,31 +37,31 @@ class Queue:
         raise NotImplementedError("Flow 4: Queue.max_size")
 
     def enqueue(self, item: Any) -> Any | None:
-        """Add `item` at the back.
+        """Agrega `item` al final.
 
-        If the queue is bounded and already full, first drop the front item and
-        return it. Otherwise return None.
+        Si la cola tiene límite y ya está llena, primero descarta el elemento del
+        frente y lo devuelve. Si no, devuelve None.
         """
         raise NotImplementedError("Flow 4: Queue.enqueue")
 
     def dequeue(self) -> Any:
-        """Remove and return the front item. Raise IndexError if empty."""
+        """Saca y devuelve el elemento del frente. IndexError si está vacía."""
         raise NotImplementedError("Flow 4: Queue.dequeue")
 
     def peek(self) -> Any:
-        """Return the front item without removing it. Raise IndexError if empty."""
+        """Devuelve el elemento del frente sin sacarlo. IndexError si está vacía."""
         raise NotImplementedError("Flow 4: Queue.peek")
 
     def remove_first(self, predicate: Callable[[Any], bool]) -> Any | None:
-        """Remove the first item (starting at the front) for which predicate(item) is True.
+        """Saca el primer elemento (empezando por el frente) para el que predicate(elemento) es True.
 
-        Return the removed item, or None if no item matches. Watch out for the
-        front and back references when the removed node is the first or the last.
+        Devuelve el elemento sacado, o None si ninguno coincide. Ojo con las
+        referencias al frente y al final cuando el nodo sacado es el primero o el último.
         """
         raise NotImplementedError("Flow 4: Queue.remove_first")
 
     def resize(self, max_size: int | None) -> None:
-        """Change the capacity. If there are more items than the new size, drop from the front."""
+        """Cambia la capacidad. Si hay más elementos que el nuevo tamaño, descarta desde el frente."""
         raise NotImplementedError("Flow 4: Queue.resize")
 
     def is_empty(self) -> bool:
@@ -71,5 +71,5 @@ class Queue:
         raise NotImplementedError("Flow 4: Queue.__len__")
 
     def to_list(self) -> list[Any]:
-        """Items from front to back. Must not modify the queue."""
+        """Elementos del frente al final. No debe modificar la cola."""
         raise NotImplementedError("Flow 4: Queue.to_list")

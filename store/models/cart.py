@@ -1,8 +1,8 @@
-"""Shopping cart — FLOW 4 (cart and orders).
+"""Carrito de compras — FLUJO 4 (carrito y pedidos).
 
-Groups what a customer wants to buy before placing the order. The console uses
-it to build the order step by step, and OrderService uses it to merge repeated
-codes ([(50, 1), (50, 2)] -> one line of 3 units).
+Agrupa lo que el cliente quiere comprar antes de hacer el pedido. La consola lo
+usa para armar el pedido paso a paso, y OrderService lo usa para juntar códigos
+repetidos ([(50, 1), (50, 2)] -> una sola línea de 3 unidades).
 Tests: tests/unit/test_cart.py
 """
 
@@ -12,18 +12,18 @@ class Cart:
         raise NotImplementedError("Flow 4: Cart.__init__")
 
     def add(self, code: int, quantity: int = 1) -> None:
-        """Add units of a product. If the code is already in the cart, add to its quantity.
+        """Agrega unidades de un producto. Si el código ya está en el carrito, suma a su cantidad.
 
-        ValueError if quantity is not an int > 0.
+        ValueError si quantity no es un int > 0.
         """
         raise NotImplementedError("Flow 4: Cart.add")
 
     def remove(self, code: int) -> bool:
-        """Remove the line for `code`. False if it wasn't in the cart."""
+        """Saca la línea de `code`. False si no estaba en el carrito."""
         raise NotImplementedError("Flow 4: Cart.remove")
 
     def lines(self) -> list[tuple[int, int]]:
-        """[(code, quantity), ...] in the order the codes were first added."""
+        """[(código, cantidad), ...] en el orden en que se agregó cada código por primera vez."""
         raise NotImplementedError("Flow 4: Cart.lines")
 
     def clear(self) -> None:
@@ -33,5 +33,5 @@ class Cart:
         raise NotImplementedError("Flow 4: Cart.is_empty")
 
     def __len__(self) -> int:
-        """Number of distinct products (lines), not units."""
+        """Cantidad de productos distintos (líneas), no de unidades."""
         raise NotImplementedError("Flow 4: Cart.__len__")

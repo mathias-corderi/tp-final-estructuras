@@ -1,14 +1,13 @@
-"""Undo records — FLOW 2 (product administration).
+"""Registros para deshacer — FLUJO 2 (administración de productos).
 
-An Operation stores enough information to revert one catalog change. It is
-already implemented: CatalogService pushes one onto its Stack after every
-change and pops it in undo().
+Una Operation guarda lo necesario para revertir un cambio del catálogo. Ya está
+implementada: CatalogService apila una después de cada cambio y la desapila en undo().
 
-  kind     before                         after                     how to revert
-  ADD      None                           product.to_dict()         remove the product
-  DELETE   product.to_dict()              None                      re-insert Product.from_dict(before)
-  UPDATE   {field: old value, ...}        {field: new value, ...}   apply `before` again
-  STOCK    {"stock": old}                 {"stock": new}            add (old - new) to the CURRENT stock
+  kind     before                         after                     cómo se revierte
+  ADD      None                           product.to_dict()         se elimina el producto
+  DELETE   product.to_dict()              None                      se vuelve a insertar Product.from_dict(before)
+  UPDATE   {campo: valor viejo, ...}      {campo: valor nuevo, ...} se vuelve a aplicar `before`
+  STOCK    {"stock": viejo}               {"stock": nuevo}          se suma (viejo - nuevo) al stock ACTUAL
 """
 
 from enum import Enum

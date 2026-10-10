@@ -1,38 +1,38 @@
-"""Console options for product administration — FLOW 2.
+"""Opciones de consola de administración de productos — FLUJO 2.
 
-Same rules as the API: call container.catalog, let StoreError propagate
-(menu.py prints it).
+Mismas reglas que la API: llamar a container.catalog y dejar que StoreError se
+propague (menu.py lo imprime).
 """
 
-from store.cli import prompts  # noqa: F401  (helpers you will need)
+from store.cli import prompts  # noqa: F401  (funciones que vas a necesitar)
 from store.container import Container
 
 
 def list_all_products(c: Container) -> None:
-    """Print every product, inactive ones included, sorted by code."""
+    """Imprime todos los productos, incluidos los inactivos, ordenados por código."""
     raise NotImplementedError("Flow 2: list_all_products (console)")
 
 
 def add_product(c: Container) -> None:
-    """Ask for each field (min_stock and discount optional) and create the product."""
+    """Pide cada campo (min_stock y descuento opcionales) y crea el producto."""
     raise NotImplementedError("Flow 2: add_product (console)")
 
 
 def edit_product(c: Container) -> None:
-    """Ask for a code, show the product, ask each field with blank = keep, apply only the changes."""
+    """Pide un código, muestra el producto, pide cada campo (en blanco = mantener) y aplica solo los cambios."""
     raise NotImplementedError("Flow 2: edit_product (console)")
 
 
 def delete_product(c: Container) -> None:
-    """Ask for a code, show the product and confirm before deleting."""
+    """Pide un código, muestra el producto y pide confirmación antes de borrarlo."""
     raise NotImplementedError("Flow 2: delete_product (console)")
 
 
 def manage_stock(c: Container) -> None:
-    """Submenu: 1) restock (quantity)  2) adjust (delta + reason)."""
+    """Submenú: 1) reponer (cantidad)  2) ajustar (delta + motivo)."""
     raise NotImplementedError("Flow 2: manage_stock (console)")
 
 
 def undo_last(c: Container) -> None:
-    """Show what will be undone (top of the undo history), confirm, undo."""
+    """Muestra qué se va a deshacer (el tope del historial), pide confirmación y deshace."""
     raise NotImplementedError("Flow 2: undo_last (console)")

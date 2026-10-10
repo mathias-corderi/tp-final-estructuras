@@ -1,7 +1,7 @@
-"""FLOW 2 — product administration: CRUD, stock and undo (stack).
+"""FLUJO 2 — administración de productos: ABM, stock y deshacer (pila).
 
-Several tests check the other structures through the container to make sure
-CatalogService keeps the list, both BSTs and the category tree in sync.
+Varios tests revisan las otras estructuras a través del container para comprobar
+que CatalogService mantiene sincronizados la lista, los dos BST y el árbol de categorías.
 """
 
 import pytest
@@ -24,7 +24,7 @@ def category_codes(container, path):
     return [product.code for product in container.category_tree.items(path)]
 
 
-# --- listing -------------------------------------------------------------------
+# --- listado -------------------------------------------------------------------
 def test_admin_list_includes_inactive(client, admin_headers):
     response = client.get("/admin/products", headers=admin_headers)
     assert response.status_code == 200
@@ -33,14 +33,14 @@ def test_admin_list_includes_inactive(client, admin_headers):
     assert codes(by_name) == [80, 10, 50, 40, 60, 20, 30, 70]
 
 
-# --- create --------------------------------------------------------------------
+# --- alta --------------------------------------------------------------------
 def test_create_product(client, admin_headers, container):
     response = client.post("/admin/products", json=NEW_PRODUCT, headers=admin_headers)
     assert response.status_code == 201
     body = response.json()
     assert body["code"] == 90
     assert body["final_price"] == 1900.0
-    assert body["min_stock"] == 4  # store default_min_stock
+    assert body["min_stock"] == 4  # default_min_stock de la tienda
     assert body["active"] is True
 
     assert client.get("/products/90").status_code == 200
@@ -72,7 +72,7 @@ def test_create_with_invalid_data_returns_422(client, admin_headers, override):
     assert client.get("/products/90").status_code == 404
 
 
-# --- update --------------------------------------------------------------------
+# --- modificación --------------------------------------------------------------------
 def test_update_name_resyncs_name_tree(client, admin_headers):
     response = client.patch("/admin/products/50", json={"name": "Zero Cola 1.5L"}, headers=admin_headers)
     assert response.status_code == 200
@@ -124,7 +124,7 @@ def test_invalid_updates_change_nothing(client, admin_headers, code, body, statu
     assert client.get("/products/50").json() == before
 
 
-# --- delete --------------------------------------------------------------------
+# --- baja --------------------------------------------------------------------
 def test_delete_product_everywhere(client, admin_headers, container):
     response = client.delete("/admin/products/50", headers=admin_headers)
     assert response.status_code == 204
@@ -171,7 +171,7 @@ def test_stock_adjustment_errors_change_nothing(client, admin_headers, body, sta
     assert client.get("/products/30").json()["stock"] == 3
 
 
-# --- undo ----------------------------------------------------------------------
+# --- deshacer ----------------------------------------------------------------------
 def test_undo_with_empty_stack_returns_409(client, admin_headers):
     assert client.post("/admin/undo", headers=admin_headers).status_code == 409
 

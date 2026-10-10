@@ -1,12 +1,12 @@
-"""Sequential product list — FLOW 1 (catalog browsing and search).
+"""Lista secuencial de productos — FLUJO 1 (navegación y búsqueda del catálogo).
 
-Keeps the products in insertion order and searches them one by one, counting
-comparisons. It is the "slow" structure that we compare against the BST.
+Guarda los productos en orden de inserción y los busca uno por uno, contando
+comparaciones. Es la estructura "lenta" que comparamos contra el BST.
 
-Items are any objects with `code`, `name` and `brand` attributes (in the app
-they are `Product`s; in the unit tests, simple stand-ins).
-Use a Python list internally, but write every search as an explicit `for` loop:
-no `x in list`, no list.index(), no dicts.
+Los elementos son objetos con atributos `code`, `name` y `brand` (en la app son
+`Product`; en los tests unitarios, objetos simples que los imitan).
+Usá una lista de Python por dentro, pero escribí cada búsqueda como un `for`
+explícito: nada de `x in lista`, list.index() ni diccionarios.
 Tests: tests/unit/test_product_list.py
 """
 
@@ -18,34 +18,34 @@ class ProductList:
         raise NotImplementedError("Flow 1: ProductList.__init__")
 
     def append(self, product: Any) -> None:
-        """Add at the end. Does NOT check duplicates (CatalogService does it with the BST)."""
+        """Agrega al final. NO controla duplicados (eso lo hace CatalogService con el BST)."""
         raise NotImplementedError("Flow 1: ProductList.append")
 
     def remove(self, code: int) -> Any | None:
-        """Remove and return the product with that code, or None if missing."""
+        """Saca y devuelve el producto con ese código, o None si no está."""
         raise NotImplementedError("Flow 1: ProductList.remove")
 
     def find_by_code(self, code: int) -> tuple[Any | None, int]:
-        """Sequential search that stops at the first match.
+        """Búsqueda secuencial que se detiene en la primera coincidencia.
 
-        Return (product or None, comparisons), comparisons = items examined.
+        Devuelve (producto o None, comparaciones), comparaciones = elementos revisados.
         """
         raise NotImplementedError("Flow 1: ProductList.find_by_code")
 
     def search_by_name(self, text: str) -> tuple[list[Any], int]:
-        """Case-insensitive *substring* match on `name`.
+        """Coincidencia por *substring* en `name`, sin distinguir mayúsculas.
 
-        Walks the whole list, so comparisons == len(self).
-        Results keep list order.
+        Recorre la lista entera, así que comparaciones == len(self).
+        Los resultados respetan el orden de la lista.
         """
         raise NotImplementedError("Flow 1: ProductList.search_by_name")
 
     def search_by_brand(self, text: str) -> tuple[list[Any], int]:
-        """Same as search_by_name, but on `brand`."""
+        """Igual que search_by_name, pero sobre `brand`."""
         raise NotImplementedError("Flow 1: ProductList.search_by_brand")
 
     def to_list(self) -> list[Any]:
-        """A copy of the items in list order (changing the copy must not affect the list)."""
+        """Una copia de los elementos en orden (modificar la copia no debe afectar a la lista)."""
         raise NotImplementedError("Flow 1: ProductList.to_list")
 
     def __len__(self) -> int:

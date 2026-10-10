@@ -1,7 +1,7 @@
-"""FLOW 5 — everything survives a restart (JSON persistence).
+"""FLUJO 5 — todo sobrevive a un reinicio (persistencia en JSON).
 
-A "restart" is a brand-new Container reading the same file. These tests touch
-every flow, so they only pass once all of them save correctly.
+Un "reinicio" es un Container nuevo leyendo el mismo archivo. Estos tests tocan
+todos los flujos, así que recién pasan cuando todos guardan bien.
 """
 
 import json

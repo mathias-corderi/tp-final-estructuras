@@ -1,7 +1,7 @@
-"""Request/response shapes for products (Flows 1 and 2). Part of the contract — already implemented.
+"""Formas de request/response de productos (Flujos 1 y 2). Parte del contrato — ya implementado.
 
-Output models use from_attributes=True, so a route can return the domain
-object (a Product, an Operation) and FastAPI reads its properties.
+Los modelos de salida usan from_attributes=True, así una ruta puede devolver el
+objeto del dominio (un Product, una Operation) y FastAPI lee sus propiedades.
 """
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -31,13 +31,13 @@ class ProductCreate(BaseModel):
     price: float = Field(gt=0)
     stock: int = Field(default=0, ge=0)
     category: str = Field(min_length=1)
-    min_stock: int | None = Field(default=None, ge=0, description="Defaults to the store's default_min_stock")
+    min_stock: int | None = Field(default=None, ge=0, description="Por defecto, el default_min_stock de la tienda")
     discount_percent: float = Field(default=0, ge=0, le=90)
     active: bool = True
 
 
 class ProductUpdate(BaseModel):
-    """Only the fields sent are changed (use model_dump(exclude_unset=True)). `code` and `stock` can't be changed here."""
+    """Solo cambian los campos enviados (usar model_dump(exclude_unset=True)). `code` y `stock` no se cambian acá."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -55,7 +55,7 @@ class RestockIn(BaseModel):
 
 
 class StockAdjustmentIn(BaseModel):
-    delta: int = Field(description="Units to add (positive) or remove (negative); not 0")
+    delta: int = Field(description="Unidades a sumar (positivo) o restar (negativo); distinto de 0")
     reason: str = Field(min_length=1)
 
 

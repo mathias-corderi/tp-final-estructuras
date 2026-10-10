@@ -1,4 +1,4 @@
-"""FLOW 3 — categories (n-ary tree): browse, create, rename, delete, bulk prices."""
+"""FLUJO 3 — categorías (árbol n-ario): explorar, crear, renombrar, borrar, precios por rama."""
 
 import pytest
 
@@ -11,7 +11,7 @@ def child(node, name):
     return next(c for c in node["children"] if c["name"] == name)
 
 
-# --- public --------------------------------------------------------------------
+# --- público --------------------------------------------------------------------
 def test_category_tree_counts_active_products(client):
     response = client.get("/categories")
     assert response.status_code == 200
@@ -34,7 +34,7 @@ def test_products_in_category_preorder(client):
 
 def test_products_in_category_without_subcategories(client):
     params = {"path": "Grocery/Drinks", "include_subcategories": False}
-    assert client.get("/categories/products", params=params).json() == []  # only the inactive juice lives there
+    assert client.get("/categories/products", params=params).json() == []  # ahí solo está el jugo inactivo
     assert codes(client.get("/categories/products", params={"path": "Cleaning"}).json()) == [80]
 
 
@@ -42,7 +42,7 @@ def test_products_in_missing_category_returns_404(client):
     assert client.get("/categories/products", params={"path": "Grocery/Nope"}).status_code == 404
 
 
-# --- create --------------------------------------------------------------------
+# --- crear --------------------------------------------------------------------
 def test_create_category_with_missing_parents(client, admin_headers):
     response = client.post("/admin/categories", json={"path": "Electronics/Phones/Android"}, headers=admin_headers)
     assert response.status_code == 201
@@ -68,7 +68,7 @@ def test_create_category_errors(client, admin_headers, path, status):
     assert client.post("/admin/categories", json={"path": path}, headers=admin_headers).status_code == status
 
 
-# --- rename --------------------------------------------------------------------
+# --- renombrar --------------------------------------------------------------------
 def test_rename_updates_products(client, admin_headers):
     response = client.patch(
         "/admin/categories", json={"path": "Grocery/Snacks", "new_name": "Treats"}, headers=admin_headers
@@ -101,7 +101,7 @@ def test_rename_errors(client, admin_headers, body, status):
     assert client.get("/products/40").json()["category"] == "Grocery/Snacks"
 
 
-# --- delete --------------------------------------------------------------------
+# --- borrar --------------------------------------------------------------------
 def test_delete_empty_category(client, admin_headers):
     response = client.delete("/admin/categories", params={"path": "Electronics"}, headers=admin_headers)
     assert response.status_code == 204
@@ -111,8 +111,8 @@ def test_delete_empty_category(client, admin_headers):
 @pytest.mark.parametrize(
     "path, status",
     [
-        ("Cleaning", 409),  # has products
-        ("Grocery/Drinks", 409),  # has subcategories (and an inactive product)
+        ("Cleaning", 409),  # tiene productos
+        ("Grocery/Drinks", 409),  # tiene subcategorías (y un producto inactivo)
         ("Grocery/Nope", 404),
         ("", 422),
     ],
@@ -121,7 +121,7 @@ def test_delete_category_errors(client, admin_headers, path, status):
     assert client.delete("/admin/categories", params={"path": path}, headers=admin_headers).status_code == status
 
 
-# --- bulk price adjustment -----------------------------------------------------
+# --- ajuste de precios por rama -----------------------------------------------------
 def test_price_adjustment_on_subtree(client, admin_headers):
     response = client.post(
         "/admin/categories/price-adjustment", json={"path": "Grocery/Drinks", "percent": 10}, headers=admin_headers
@@ -131,7 +131,7 @@ def test_price_adjustment_on_subtree(client, admin_headers):
     assert client.get("/products/50").json()["price"] == 2750.0
     pepsi = client.get("/products/20").json()
     assert (pepsi["price"], pepsi["final_price"]) == (2420.0, 2178.0)
-    assert client.get("/products/60").json()["price"] == 1500.0  # outside the subtree
+    assert client.get("/products/60").json()["price"] == 1500.0  # fuera del subárbol
 
 
 def test_price_decrease(client, admin_headers):

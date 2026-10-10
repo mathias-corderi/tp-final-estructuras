@@ -1,4 +1,4 @@
-"""Global configuration. Every value can be overridden with an environment variable."""
+"""Configuración global. Cada valor se puede cambiar con una variable de entorno."""
 
 import os
 from pathlib import Path
@@ -9,10 +9,10 @@ EXPORTS_DIR = PROJECT_ROOT / "exports"
 
 
 def data_path() -> Path:
-    """JSON file where the store state is persisted (STORE_DATA_PATH)."""
+    """Archivo JSON donde se guarda el estado de la tienda (STORE_DATA_PATH)."""
     return Path(os.environ.get("STORE_DATA_PATH", PROJECT_ROOT / "data" / "store.json"))
 
 
 def admin_token() -> str:
-    """Token required for admin operations (STORE_ADMIN_TOKEN)."""
+    """Token que exigen las operaciones de administrador (STORE_ADMIN_TOKEN)."""
     return os.environ.get("STORE_ADMIN_TOKEN", "change-me")

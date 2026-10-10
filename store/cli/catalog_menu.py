@@ -1,29 +1,29 @@
-"""Console options for catalog browsing and search — FLOW 1.
+"""Opciones de consola de navegación y búsqueda del catálogo — FLUJO 1.
 
-Each handler receives the Container and talks to the user with the helpers in
-store/cli/prompts.py. Use the same services as the API (container.catalog...),
-never the structures directly.
+Cada handler recibe el Container y habla con el usuario usando las funciones de
+store/cli/prompts.py. Usá los mismos servicios que la API (container.catalog...),
+nunca las estructuras directamente.
 """
 
-from store.cli import prompts  # noqa: F401  (helpers you will need)
+from store.cli import prompts  # noqa: F401  (funciones que vas a necesitar)
 from store.container import Container
 
 
 def search_products(c: Container) -> None:
-    """Ask for a name and/or a brand (blank = skip), run the search, record each criterion
-    in c.search_history, and print the results and the number of comparisons."""
+    """Pide un nombre y/o una marca (en blanco = no usar), hace la búsqueda, registra cada
+    criterio en c.search_history e imprime los resultados y la cantidad de comparaciones."""
     raise NotImplementedError("Flow 1: search_products (console)")
 
 
 def list_products(c: Container) -> None:
-    """Ask "sort by code or name?" and print the active products in that order."""
+    """Pregunta "¿ordenar por código o por nombre?" e imprime los productos activos en ese orden."""
     raise NotImplementedError("Flow 1: list_products (console)")
 
 
 def compare_search(c: Container) -> None:
-    """Ask for a code and show list comparisons vs tree comparisons side by side.
+    """Pide un código y muestra las comparaciones de la lista y del árbol lado a lado.
 
-    Bonus: also show the average over every product code, which is the number
-    to quote in the oral defense.
+    Extra: mostrar también el promedio sobre todos los códigos, que es el número
+    para citar en la defensa oral.
     """
     raise NotImplementedError("Flow 1: compare_search (console)")

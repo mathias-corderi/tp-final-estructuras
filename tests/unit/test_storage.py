@@ -38,7 +38,7 @@ def test_save_writes_readable_utf8(tmp_path):
     JsonStorage(path).save({**EMPTY_DATA, "products": [{"name": "Ayudín"}]})
     raw = path.read_text(encoding="utf-8")
     assert "Ayudín" in raw
-    assert "\n  " in raw  # indented
+    assert "\n  " in raw  # indentado
 
 
 def test_save_creates_parent_dirs_and_leaves_no_temp_files(tmp_path):

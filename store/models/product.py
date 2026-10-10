@@ -1,19 +1,19 @@
-"""Product — FLOW 2 (product administration).
+"""Producto — FLUJO 2 (administración de productos).
 
-The core domain class. Every attribute is private (`self._price`) and exposed
-through @property; setters validate and raise ValueError on bad data, leaving
-the old value untouched.
+La clase central del dominio. Todos los atributos son privados (`self._price`)
+y se exponen con @property; los setters validan y lanzan ValueError si el dato
+es inválido, dejando el valor anterior sin cambios.
 
-Rules:
-  code              int > 0, read-only (no setter)
-  name, brand       non-empty str, stored stripped
-  price             int or float > 0, stored as float
+Reglas:
+  code              int > 0, solo lectura (sin setter)
+  name, brand       str no vacío, se guarda sin espacios en los extremos
+  price             int o float > 0, se guarda como float
   stock             int >= 0
-  category          non-empty str, stored stripped (a category path such as "Grocery/Drinks")
-  min_stock         int >= 0 (below or at this level the product is "low stock")
-  discount_percent  int or float between 0 and 90 inclusive, stored as float
-  active            bool (inactive products are hidden from customers)
-`bool` is not a valid int/float here (True is not a price).
+  category          str no vacío, sin espacios en los extremos (una ruta como "Grocery/Drinks")
+  min_stock         int >= 0 (con stock menor o igual a esto, el producto está en "stock bajo")
+  discount_percent  int o float entre 0 y 90 inclusive, se guarda como float
+  active            bool (los productos inactivos no se muestran a los clientes)
+`bool` no cuenta como int/float válido acá (True no es un precio).
 
 Tests: tests/unit/test_product.py
 """
@@ -36,7 +36,7 @@ class Product:
     ) -> None:
         raise NotImplementedError("Flow 2: Product.__init__")
 
-    # --- properties ------------------------------------------------------------
+    # --- propiedades -----------------------------------------------------------
     @property
     def code(self) -> int:
         raise NotImplementedError("Flow 2: Product.code")
@@ -107,26 +107,26 @@ class Product:
 
     @property
     def final_price(self) -> float:
-        """Price with the discount applied, rounded to 2 decimals. 1000 with 15 % -> 850.0"""
+        """Precio con el descuento aplicado, redondeado a 2 decimales. 1000 con 15 % -> 850.0"""
         raise NotImplementedError("Flow 2: Product.final_price")
 
-    # --- serialization ---------------------------------------------------------
+    # --- serialización ---------------------------------------------------------
     def to_dict(self) -> dict[str, Any]:
-        """Keys: code, name, brand, price, stock, category, min_stock, discount_percent, active.
+        """Claves: code, name, brand, price, stock, category, min_stock, discount_percent, active.
 
-        (final_price is NOT included: it's derived, not stored.)
+        (final_price NO va: es un valor calculado, no se guarda.)
         """
         raise NotImplementedError("Flow 2: Product.to_dict")
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Product":
-        """Inverse of to_dict. min_stock, discount_percent and active are optional
-        (constructor defaults). Extra keys such as final_price are ignored."""
+        """Inversa de to_dict. min_stock, discount_percent y active son opcionales
+        (toman los valores por defecto del constructor). Claves extra como final_price se ignoran."""
         raise NotImplementedError("Flow 2: Product.from_dict")
 
-    # --- identity --------------------------------------------------------------
+    # --- identidad -------------------------------------------------------------
     def __eq__(self, other: object) -> bool:
-        """Two products are equal when both are Products with the same code."""
+        """Dos productos son iguales si ambos son Product y tienen el mismo código."""
         raise NotImplementedError("Flow 2: Product.__eq__")
 
     def __hash__(self) -> int:

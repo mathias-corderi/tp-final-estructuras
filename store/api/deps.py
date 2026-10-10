@@ -1,4 +1,4 @@
-"""FastAPI dependencies. Shared code — already implemented."""
+"""Dependencias de FastAPI. Código compartido — ya implementado."""
 
 import secrets
 
@@ -11,7 +11,7 @@ _container: Container | None = None
 
 
 def get_container() -> Container:
-    """The app's single Container, built on first use. Tests override this dependency."""
+    """El único Container de la app, se crea en el primer uso. Los tests reemplazan esta dependencia."""
     global _container
     if _container is None:
         _container = build_default_container()
@@ -19,7 +19,7 @@ def get_container() -> Container:
 
 
 def require_admin(x_admin_token: str | None = Header(default=None)) -> None:
-    """Guard for /admin/* routes: 401 without the X-Admin-Token header, 403 if it's wrong."""
+    """Protección de las rutas /admin/*: 401 sin el header X-Admin-Token, 403 si es incorrecto."""
     if x_admin_token is None:
         raise HTTPException(status_code=401, detail="Missing X-Admin-Token header")
     if not secrets.compare_digest(x_admin_token, config.admin_token()):

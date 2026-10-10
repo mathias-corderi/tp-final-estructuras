@@ -1,4 +1,4 @@
-"""FLOW 5 — store settings."""
+"""FLUJO 5 — configuración de la tienda."""
 
 import pytest
 

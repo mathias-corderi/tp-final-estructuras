@@ -1,4 +1,4 @@
-"""Shared infrastructure: these pass from day one and must keep passing."""
+"""Infraestructura compartida: estos pasan desde el primer día y tienen que seguir pasando."""
 
 import pytest
 

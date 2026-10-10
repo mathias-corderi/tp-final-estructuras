@@ -1,4 +1,4 @@
-"""Request/response shapes for categories (Flow 3). Part of the contract — already implemented."""
+"""Formas de request/response de categorías (Flujo 3). Parte del contrato — ya implementado."""
 
 from pydantic import BaseModel, Field
 
@@ -23,7 +23,7 @@ class CategoryRename(BaseModel):
 
 class PriceAdjustmentIn(BaseModel):
     path: str = Field(examples=["Grocery/Drinks"])
-    percent: float = Field(ge=-90, le=500, description="Not 0. 10 = +10 %, -15 = -15 %")
+    percent: float = Field(ge=-90, le=500, description="Distinto de 0. 10 = +10 %, -15 = -15 %")
 
 
 class PriceAdjustmentOut(BaseModel):

@@ -84,10 +84,10 @@ def test_remove_first_without_match_returns_none():
 
 def test_remove_first_keeps_front_and_back_consistent():
     queue = make(1, 2, 3)
-    queue.remove_first(lambda value: value == 3)  # removes the back
+    queue.remove_first(lambda value: value == 3)  # saca el último
     queue.enqueue(4)
     assert queue.to_list() == [1, 2, 4]
-    queue.remove_first(lambda value: value == 1)  # removes the front
+    queue.remove_first(lambda value: value == 1)  # saca el primero
     assert queue.peek() == 2
     assert queue.dequeue() == 2
     assert queue.to_list() == [4]
