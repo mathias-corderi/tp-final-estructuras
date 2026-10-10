@@ -1,0 +1,11 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+
+# Runtime data: the app creates it from data/seed.json on first run
+data/store.json
+data/*.tmp
+exports/

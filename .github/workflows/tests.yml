@@ -1,0 +1,36 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  shared:
+    name: shared (must pass)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: pytest -m shared
+
+  progress:
+    name: progress ${{ matrix.flow }}
+    runs-on: ubuntu-latest
+    # Red flows are expected until each one is finished: they don't block the PR.
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        flow: [flow_catalog, flow_products, flow_categories, flow_orders, flow_reports]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: pytest -m ${{ matrix.flow }} -q

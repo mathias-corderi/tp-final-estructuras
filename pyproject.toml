@@ -1,0 +1,20 @@
+[project]
+name = "store-tp"
+version = "0.1.0"
+description = "TP Final Estructuras de Datos — tienda con API (FastAPI) y menú de consola"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "tests"]
+addopts = "-ra"
+filterwarnings = ["ignore::DeprecationWarning:fastapi.testclient", "ignore:Using `httpx`"]
+markers = [
+    "shared: infraestructura común, tiene que pasar siempre",
+    "flow_catalog: Flujo 1 — navegación y búsqueda del catálogo",
+    "flow_products: Flujo 2 — administración de productos",
+    "flow_categories: Flujo 3 — categorías",
+    "flow_orders: Flujo 4 — carrito y pedidos",
+    "flow_reports: Flujo 5 — reportes, configuración y persistencia",
+    "integration: necesita todos los flujos implementados",
+]
