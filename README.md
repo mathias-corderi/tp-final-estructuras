@@ -11,7 +11,7 @@ Toda la lógica vive en un núcleo propio con **estructuras de datos implementad
 
 | Integrante | Flujo | GitHub |
 |---|---|---|
-| _completar_ | 1 — Navegación y búsqueda del catálogo | |
+| _completar_ | 1 — Navegación y búsqueda del catálogo | Ronel |
 | _completar_ | 2 — Administración de productos | |
 | _completar_ | 3 — Categorías | |
 | _completar_ | 4 — Carrito y pedidos | |
