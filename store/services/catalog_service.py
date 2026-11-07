@@ -28,6 +28,7 @@ from store.models.product import Product
 from store.models.settings import StoreSettings
 from store.services.undo import Operation
 from store.structures.category_tree import CategoryTree
+from store.errors import ProductNotFound, ValidationError
 
 
 class CatalogService:
@@ -117,32 +118,67 @@ class CatalogService:
     # FLUJO 1 — consultas
     # ======================================================================
     def list_products(self, sort: str = "code", include_inactive: bool = False) -> list[Product]:
-        """Productos en el inorden del BST: sort="code" usa _by_code y sort="name" usa _by_name.
-
-        Cualquier otro sort -> ValidationError. Los inactivos solo si include_inactive.
-        """
-        raise NotImplementedError("Flow 1: CatalogService.list_products")
+        """Productos en el inorden del BST: sort="code" usa _by_code y sort="name" usa _by_name."""
+        if sort == 'code':
+            products = self._by_code.inorder()
+        elif sort == 'name':
+            products = self._by_name.inorder()
+        else:
+            raise ValidationError(f'Criterio de orden invalido: {sort}')
+        
+        if not include_inactive:
+            products = [p for p in products if p.active]
+            
+        return products
 
     def get(self, code: int, include_inactive: bool = False) -> Product:
         """Busca el código en _by_code. ProductNotFound si no está, o si está inactivo y no se pidió include_inactive."""
-        raise NotImplementedError("Flow 1: CatalogService.get")
+        product, _ = self._by_code.search(code)
+        if product is None:
+            raise ProductNotFound(f'Producto {code} no encontrado')
+        
+        if not product.active and not include_inactive:
+            raise ProductNotFound(f'Producto {code} inactivo')
+        
+        return product
+        
 
     def search(self, name: str | None = None, brand: str | None = None) -> tuple[list[Product], int]:
-        """Búsqueda secuencial en _list. Devuelve (resultados activos en el orden de la lista, comparaciones).
-
-        - Al menos un criterio no vacío; si no, ValidationError.
-        - Solo name: search_by_name. Solo brand: search_by_brand.
-        - Los dos: productos que cumplen AMBOS; comparaciones = las dos búsquedas sumadas.
-        """
-        raise NotImplementedError("Flow 1: CatalogService.search")
+        """Búsqueda secuencial en _list. Devuelve (resultados activos en el orden de la lista, comparaciones)."""
+        name_empty = not name or not name.strip()
+        brand_empty = not brand or not brand.strip()
+        
+        if name_empty and brand_empty:
+            raise ValidationError('Debe proporcionar al menos un criterio de busqueda')
+        
+        if not name_empty and brand_empty:
+            results, comparisons = self._list.search_by_name(name.strip())
+        elif name_empty and not brand_empty:
+            results, comparisons = self._list.search_by_brand(brand.strip())
+        else:
+            res_name, comp_name = self._list.search_by_name(name.strip())
+            res_brand, comp_brand = self._list.search_by_brand(brand.strip())
+            brand_codes = {p.code for p in res_brand}
+            results = [p for p in res_name if p.code in brand_codes]
+            comparisons = comp_name + comp_brand
+            
+        active_results = [p for p in results if p.active]
+        return (active_results, comparisons)
 
     def compare_search(self, code: int) -> dict[str, Any]:
-        """Busca el mismo código en la lista y en el BST (los inactivos cuentan como encontrados).
-
-        {"code": 80, "found": True, "list_comparisons": 7, "tree_comparisons": 3}
-        """
-        raise NotImplementedError("Flow 1: CatalogService.compare_search")
-
+        """Busca el mismo código en la lista y en el BST (los inactivos cuentan como encontrados)."""
+        prod_list, list_comps = self._list.find_by_code(code)
+        prod_tree, tree_comps = self._by_code.search(code)
+        
+        return {
+            'code': code,
+            'found': prod_tree is not None,
+            'list_comparisons': list_comps,
+            'tree_comparisons': tree_comps,
+        }
     def tree_heights(self) -> dict[str, int]:
         """{"by_code": _by_code.height(), "by_name": _by_name.height()} (lo usan los reportes)."""
-        raise NotImplementedError("Flow 1: CatalogService.tree_heights")
+        return {
+            'by_code': self._by_code.height(),
+            "by_name": self._by_name.height(),
+        }
