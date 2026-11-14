@@ -14,10 +14,10 @@ router = APIRouter(prefix="/admin/settings", tags=["admin: settings"], dependenc
 @router.get("", response_model=SettingsOut)
 def get_settings(c: Container = Depends(get_container)):
     """Configuración actual de la tienda."""
-    raise NotImplementedError("Flow 5: GET /admin/settings")
+    return c.settings_service.get()
 
 
 @router.patch("", response_model=SettingsOut)
 def update_settings(body: SettingsUpdate, c: Container = Depends(get_container)):
     """Cambia algunos valores (todo o nada). 422 body vacío o valor inválido."""
-    raise NotImplementedError("Flow 5: PATCH /admin/settings")
+    return c.settings_service.update(body.model_dump(exclude_unset=True))
