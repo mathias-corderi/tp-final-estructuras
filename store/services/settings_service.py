@@ -30,13 +30,23 @@ class SettingsService:
         """
         if not changes:
             raise errors.ValidationError("No settings to change")
+        previous = self._settings.to_dict()
         try:
             self._settings.update(**changes)
         except ValueError as exc:
             raise errors.ValidationError(str(exc)) from exc
 
+        if self._on_change is not None:
+            try:
+                self._on_change()
+            except BaseException:
+                # Si no se pudo guardar, se vuelve atrás para que la memoria coincida con el archivo.
+                self._settings.update(**previous)
+                raise
+
+        # El historial se achica recién después de guardar bien, porque descartar
+        # búsquedas no se puede deshacer. Si el archivo quedó con más términos que el
+        # nuevo tamaño no importa: al cargar, la cola acotada se queda con los últimos.
         if "search_history_size" in changes:
             self._search_history.resize(self._settings.search_history_size)
-        if self._on_change is not None:
-            self._on_change()
         return self._settings

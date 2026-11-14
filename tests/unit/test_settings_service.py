@@ -58,3 +58,32 @@ def test_shrinking_history_size_discards_oldest_terms():
 def test_update_works_without_on_change():
     service = SettingsService(StoreSettings(), SearchHistory(3))
     assert service.update({"currency": "usd"}).currency == "USD"
+
+
+def failing_save():
+    raise OSError("disk full")
+
+
+def test_failed_save_restores_the_previous_settings():
+    # Si guardar falla, lo que quedó en memoria tiene que coincidir con lo que está en el archivo.
+    settings = StoreSettings(store_name="Kiosco", currency="ARS")
+    service = SettingsService(settings, SearchHistory(settings.search_history_size), on_change=failing_save)
+
+    with pytest.raises(OSError):
+        service.update({"store_name": "Don Pepe", "currency": "USD"})
+
+    assert settings.to_dict() == StoreSettings(store_name="Kiosco", currency="ARS").to_dict()
+
+
+def test_failed_save_keeps_the_search_history():
+    settings = StoreSettings()
+    history = SearchHistory(settings.search_history_size)
+    for term in ("a", "b", "c"):
+        history.record(term)
+    service = SettingsService(settings, history, on_change=failing_save)
+
+    with pytest.raises(OSError):
+        service.update({"search_history_size": 2})
+
+    assert settings.search_history_size == 10
+    assert history.to_list() == ["a", "b", "c"]
