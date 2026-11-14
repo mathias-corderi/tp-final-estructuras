@@ -46,6 +46,8 @@ class SearchHistory:
 
     def load(self, terms: list[str]) -> None:
         """Restaura desde el archivo. `terms` viene con el más viejo primero (el formato de to_list)."""
+        # Restaurar reemplaza lo que hubiera: se arranca de una cola vacía con la misma capacidad.
+        self._terms = Queue(self._terms.max_size)
         for term in terms:
             self._terms.enqueue(term)
 
