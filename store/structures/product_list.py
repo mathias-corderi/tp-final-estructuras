@@ -1,4 +1,4 @@
-"""Lista secuencial de productos — FLUJO 1 (navegación y búsqueda del catálogo).
+"""Lista secuencial de productos — FLUJO 1 (navegacion y busqueda del catalogo).
 
 Guarda los productos en orden de inserción y los busca uno por uno, contando
 comparaciones. Es la estructura "lenta" que comparamos contra el BST.
@@ -15,22 +15,34 @@ from typing import Any, Iterator
 
 class ProductList:
     def __init__(self) -> None:
-        raise NotImplementedError("Flow 1: ProductList.__init__")
+        self._items = []
+
 
     def append(self, product: Any) -> None:
         """Agrega al final. NO controla duplicados (eso lo hace CatalogService con el BST)."""
-        raise NotImplementedError("Flow 1: ProductList.append")
+        self._items.append(product)
+
 
     def remove(self, code: int) -> Any | None:
         """Saca y devuelve el producto con ese código, o None si no está."""
-        raise NotImplementedError("Flow 1: ProductList.remove")
+        for i in range(len(self._items)):
+            if self._items[i].code == code:
+                return self._items.pop(i)
+        return None
+        
+ 
 
     def find_by_code(self, code: int) -> tuple[Any | None, int]:
         """Búsqueda secuencial que se detiene en la primera coincidencia.
-
-        Devuelve (producto o None, comparaciones), comparaciones = elementos revisados.
+           Devuelve (producto o None, comparaciones), comparaciones = elementos revisados.
         """
-        raise NotImplementedError("Flow 1: ProductList.find_by_code")
+        comparisons = 0
+        for item in self._items:
+            comparisons += 1
+            if item.code == code :
+                return (item, comparisons)
+        return (None, comparisons)
+
 
     def search_by_name(self, text: str) -> tuple[list[Any], int]:
         """Coincidencia por *substring* en `name`, sin distinguir mayúsculas.
@@ -38,18 +50,38 @@ class ProductList:
         Recorre la lista entera, así que comparaciones == len(self).
         Los resultados respetan el orden de la lista.
         """
-        raise NotImplementedError("Flow 1: ProductList.search_by_name")
+        text_lower = text.lower()
+        results = []
+        comparisons = 0
+    
+        for item in self._items:
+            comparisons += 1
+            if text_lower in item.name.lower():
+                results.append(item)
+            
+        return (results, comparisons)
+    
+    
 
     def search_by_brand(self, text: str) -> tuple[list[Any], int]:
         """Igual que search_by_name, pero sobre `brand`."""
-        raise NotImplementedError("Flow 1: ProductList.search_by_brand")
+        text_lower = text.lower()
+        results = []
+        comparisons = 0
+        
+        for item in self._items:
+            comparisons += 1
+            if item.brand and text_lower in item.brand.lower():
+                results.append(item)
+        return (results, comparisons) 
 
     def to_list(self) -> list[Any]:
         """Una copia de los elementos en orden (modificar la copia no debe afectar a la lista)."""
-        raise NotImplementedError("Flow 1: ProductList.to_list")
+        return list(self._items)
 
     def __len__(self) -> int:
-        raise NotImplementedError("Flow 1: ProductList.__len__")
+        return len(self._items)
+        
 
     def __iter__(self) -> Iterator[Any]:
-        raise NotImplementedError("Flow 1: ProductList.__iter__")
+        return iter(self._items)

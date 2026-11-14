@@ -1,3 +1,23 @@
+"""Producto — FLUJO 2 (administración de productos).
+
+La clase central del dominio. Todos los atributos son privados (`self._price`)
+y se exponen con @property; los setters validan y lanzan ValueError si el dato
+es inválido, dejando el valor anterior sin cambios.
+
+Reglas:
+  code              int > 0, solo lectura (sin setter)
+  name, brand       str no vacío, se guarda sin espacios en los extremos
+  price             int o float > 0, se guarda como float
+  stock             int >= 0
+  category          str no vacío, sin espacios en los extremos (una ruta como "Grocery/Drinks")
+  min_stock         int >= 0 (con stock menor o igual a esto, el producto está en "stock bajo")
+  discount_percent  int o float entre 0 y 90 inclusive, se guarda como float
+  active            bool (los productos inactivos no se muestran a los clientes)
+`bool` no cuenta como int/float válido acá (True no es un precio).
+
+Tests: tests/unit/test_product.py
+"""
+
 from typing import Any
 
 
@@ -16,7 +36,7 @@ class Product:
     ) -> None:
         # El código es de solo lectura, lo validamos y asignamos directamente acá
         if not isinstance(code, int) or isinstance(code, bool) or code <= 0:
-            raise ValueError("El código debe ser un número entero mayor a 0.")
+            raise ValueError("code must be an integer greater than 0")
         self._code = code
         
         # El resto usa los setters para aprovechar la validación
@@ -41,7 +61,7 @@ class Product:
     @name.setter
     def name(self, value: str) -> None:
         if not isinstance(value, str) or not value.strip():
-            raise ValueError("El nombre no puede estar vacío.")
+            raise ValueError("name must be a non-empty string")
         self._name = value.strip()
 
     @property
@@ -51,7 +71,7 @@ class Product:
     @brand.setter
     def brand(self, value: str) -> None:
         if not isinstance(value, str) or not value.strip():
-            raise ValueError("La marca no puede estar vacía.")
+            raise ValueError("brand must be a non-empty string")
         self._brand = value.strip()
 
     @property
@@ -61,7 +81,7 @@ class Product:
     @price.setter
     def price(self, value: float) -> None:
         if not isinstance(value, (int, float)) or isinstance(value, bool) or value <= 0:
-            raise ValueError("El precio debe ser un número mayor a 0.")
+            raise ValueError("price must be a number greater than 0")
         self._price = float(value)
 
     @property
@@ -71,7 +91,7 @@ class Product:
     @stock.setter
     def stock(self, value: int) -> None:
         if not isinstance(value, int) or isinstance(value, bool) or value < 0:
-            raise ValueError("El stock debe ser un entero mayor o igual a 0.")
+            raise ValueError("stock must be an integer >= 0")
         self._stock = value
 
     @property
@@ -81,7 +101,7 @@ class Product:
     @category.setter
     def category(self, value: str) -> None:
         if not isinstance(value, str) or not value.strip():
-            raise ValueError("La categoría no puede estar vacía.")
+            raise ValueError("category must be a non-empty string")
         self._category = value.strip()
 
     @property
@@ -91,7 +111,7 @@ class Product:
     @min_stock.setter
     def min_stock(self, value: int) -> None:
         if not isinstance(value, int) or isinstance(value, bool) or value < 0:
-            raise ValueError("El stock mínimo debe ser un entero mayor o igual a 0.")
+            raise ValueError("min_stock must be an integer >= 0")
         self._min_stock = value
 
     @property
@@ -101,7 +121,7 @@ class Product:
     @discount_percent.setter
     def discount_percent(self, value: float) -> None:
         if not isinstance(value, (int, float)) or isinstance(value, bool) or not (0 <= value <= 90):
-            raise ValueError("El descuento debe ser un número entre 0 y 90.")
+            raise ValueError("discount_percent must be a number between 0 and 90")
         self._discount_percent = float(value)
 
     @property
@@ -111,7 +131,7 @@ class Product:
     @active.setter
     def active(self, value: bool) -> None:
         if not isinstance(value, bool):
-            raise ValueError("Active debe ser un booleano (True o False).")
+            raise ValueError("active must be a boolean")
         self._active = value
 
     @property
@@ -122,7 +142,10 @@ class Product:
 
     # --- serialización ---------------------------------------------------------
     def to_dict(self) -> dict[str, Any]:
-        """Claves: code, name, brand, price, stock, category, min_stock, discount_percent, active."""
+        """Claves: code, name, brand, price, stock, category, min_stock, discount_percent, active.
+
+        (final_price NO va: es un valor calculado, no se guarda.)
+        """
         return {
             "code": self.code,
             "name": self.name,
@@ -137,7 +160,8 @@ class Product:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Product":
-        """Inversa de to_dict. min_stock, discount_percent y active son opcionales."""
+        """Inversa de to_dict. min_stock, discount_percent y active son opcionales
+        (toman los valores por defecto del constructor). Claves extra como final_price se ignoran."""
         return cls(
             code=data["code"],
             name=data["name"],

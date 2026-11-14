@@ -1,4 +1,14 @@
+"""Pila (LIFO) — FLUJO 2 (administración de productos).
+
+La usa CatalogService para deshacer la última operación sobre el catálogo.
+
+Implementala a mano. Guardar los elementos en una lista de Python y tocar
+solo su final (append / pop) está bien. NO uses collections.deque ni queue.LifoQueue.
+Tests: tests/unit/test_stack.py
+"""
+
 from typing import Any
+
 
 class Stack:
     """Colección Last-In, First-Out: el último que entra es el primero que sale."""
@@ -13,13 +23,13 @@ class Stack:
     def pop(self) -> Any:
         """Saca y devuelve el elemento del tope. IndexError si la pila está vacía."""
         if self.is_empty():
-            raise IndexError("La pila está vacía")
+            raise IndexError("pop from an empty stack")
         return self._items.pop()
 
     def peek(self) -> Any:
         """Devuelve el elemento del tope sin sacarlo. IndexError si está vacía."""
         if self.is_empty():
-            raise IndexError("La pila está vacía")
+            raise IndexError("peek from an empty stack")
         return self._items[-1]
 
     def is_empty(self) -> bool:
