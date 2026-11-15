@@ -27,8 +27,19 @@
 
 ## Flujo 4: cola de pedidos
 
-- **Por qué una cola:** los pedidos se atienden en orden de llegada (FIFO). _(completar: por qué nodos enlazados y no `list.pop(0)`, que es O(n))_.
-- **Cancelar un pedido del medio de la cola:** _(completar: cómo funciona `remove_first`)_.
+- **Por qué una cola:** los pedidos se atienden en orden de llegada (FIFO): el dueño siempre completa el pendiente más viejo. Con nodos enlazados y referencias al frente (`_front`) y al final (`_back`), `enqueue` y `dequeue` son O(1). Con una lista de Python, `list.pop(0)` es O(n) porque corre todos los elementos un lugar. Medido vaciando la cola entera:
+
+  | Pedidos en cola | `Queue.dequeue` | `list.pop(0)` |
+  |---|---|---|
+  | 10.000 | 5,9 ms | 32,8 ms |
+  | 100.000 | 60,3 ms | 4.603 ms |
+
+  La cola crece lineal (10× pedidos → 10× tiempo); la lista crece cuadrático (10× pedidos → ~140× tiempo).
+- **Cancelar un pedido del medio de la cola:** `remove_first(predicado)` recorre los nodos con dos referencias, `previous` y `current`. Cuando `current` cumple el predicado, se "puentea": `previous.next = current.next`. Hay dos casos borde: si era el frente, avanza `_front`; si era el final, `_back` pasa a ser `previous`. Es O(n), pero cancelar es mucho menos frecuente que atender.
+- **Todos los pedidos en una lista + los pendientes en la cola:** las dos guardan los mismos objetos `Order`. La lista queda ordenada por id solo con `append` (los ids son crecientes), así que `get(id)` usa **búsqueda binaria**: O(log n).
+- **Comprar sin dejar stock a medias:** `place_order` primero junta los códigos repetidos con un `Cart` (`[(30, 2), (30, 2)]` → 4 unidades), después revisa el stock de **todas** las líneas y recién ahí reserva. Si una línea falla, no se tocó nada.
+- **Precio congelado:** `OrderItem.unit_price` guarda el `final_price` (con descuento) del momento de la compra; si después el dueño cambia el precio, el pedido no cambia.
+- **Encapsulamiento:** `Order` y `OrderItem` exponen todo con `@property`; `items` devuelve una copia y solo `status` tiene setter (valida con `OrderStatus`).
 
 ## Flujo 5: persistencia, historial y reportes
 
