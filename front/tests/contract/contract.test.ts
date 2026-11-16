@@ -102,7 +102,7 @@ describe('reportes sobre el seed intacto', () => {
     expect(status).toBe(200)
     expect(headers.get('content-type')).toContain('text/plain')
     expect(data.split('\n').slice(0, 3)).toEqual([
-      'Almacén Grupo TP — Catalog (37 products)',
+      'Almacén - Grupo 4 — Catalog (37 products)',
       '',
       '762 | 7Up 1.5L | PepsiCo | Grocery/Drinks/Sodas | ARS 2100.00 | stock 12',
     ])
@@ -438,7 +438,7 @@ describe('administración de pedidos', () => {
 describe('configuración', () => {
   it('muestra y cambia todo o nada', async () => {
     expect((await admin('/admin/settings')).data).toEqual({
-      store_name: 'Almacén Grupo TP', currency: 'ARS', default_min_stock: 5, search_history_size: 10,
+      store_name: 'Almacén - Grupo 4', currency: 'ARS', default_min_stock: 5, search_history_size: 10,
     })
     const patch = (body: unknown) => admin('/admin/settings', { method: 'PATCH', body })
     expect((await patch({ store_name: 'Kiosco', currency: 'usd' })).data).toMatchObject({ store_name: 'Kiosco', currency: 'USD' })

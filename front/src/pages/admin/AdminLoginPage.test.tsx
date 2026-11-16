@@ -15,7 +15,7 @@ async function enterToken(user: ReturnType<typeof renderRoute>['user'], token: s
 describe('ingreso del dueño', () => {
   it('muestra el nombre de la tienda, un campo oculto y el camino de vuelta', async () => {
     renderRoute('/admin/ingresar')
-    expect(await screen.findByText('Almacén Grupo TP')).toBeInTheDocument()
+    expect(await screen.findByText('Almacén - Grupo 4')).toBeInTheDocument()
     expect(screen.getByLabelText('Token de acceso')).toHaveAttribute('type', 'password')
     expect(screen.getByRole('link', { name: 'Volver a la tienda' })).toHaveAttribute('href', '/')
   })

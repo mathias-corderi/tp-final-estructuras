@@ -312,7 +312,7 @@ Test Store — Catalog (7 products)
 
 ### `GET /admin/settings` · `PATCH /admin/settings`
 ```json
-{"store_name": "Almacén Grupo TP", "currency": "ARS", "default_min_stock": 5, "search_history_size": 10}
+{"store_name": "Almacén - Grupo 4", "currency": "ARS", "default_min_stock": 5, "search_history_size": 10}
 ```
 
 El PATCH cambia solo los campos que recibe, **todo o nada**:

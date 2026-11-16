@@ -6,7 +6,7 @@ import { renderRoute } from '@/test/render'
 import { mockStore, server } from '@/test/server'
 
 const ROUTE = '/admin/configuracion'
-const INITIAL = { store_name: 'Almacén Grupo TP', currency: 'ARS', default_min_stock: 5, search_history_size: 10 }
+const INITIAL = { store_name: 'Almacén - Grupo 4', currency: 'ARS', default_min_stock: 5, search_history_size: 10 }
 
 const nameField = () => screen.findByRole('textbox', { name: 'Nombre de la tienda' })
 const currencyField = () => screen.findByRole('textbox', { name: 'Moneda' })
@@ -34,7 +34,7 @@ describe('formulario', () => {
   it('muestra la configuración actual', async () => {
     renderRoute(ROUTE, { admin: true })
 
-    expect(await nameField()).toHaveValue('Almacén Grupo TP')
+    expect(await nameField()).toHaveValue('Almacén - Grupo 4')
     expect(await currencyField()).toHaveValue('ARS')
     expect(await minStockField()).toHaveValue(5)
     expect(await historyField()).toHaveValue(10)
@@ -51,7 +51,7 @@ describe('formulario', () => {
 
     expect(note).toHaveTextContent('config.ts')
     expect(note).toHaveTextContent('GET /admin/settings pide token')
-    expect(note).toHaveTextContent('Almacén Grupo TP')
+    expect(note).toHaveTextContent('Almacén - Grupo 4')
     expect(note).toHaveTextContent('ARS')
   })
 
@@ -224,7 +224,7 @@ describe('guardar', () => {
 describe('después de guardar', () => {
   it('el catálogo exportado toma el nombre nuevo sin esperar a que venza el caché', async () => {
     const { user } = renderRoute('/admin/exportar', { admin: true })
-    await screen.findByText(/Almacén Grupo TP — Catalog/)
+    await screen.findByText(/Almacén - Grupo 4 — Catalog/)
     await user.click(screen.getByRole('link', { name: 'Configuración' }))
 
     await replace(user, await nameField(), 'Kiosco')
