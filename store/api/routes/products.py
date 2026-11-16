@@ -25,7 +25,7 @@ def list_products(
     c: Container = Depends(get_container),
 ):
     """Productos activos ordenados por código o por nombre (recorrido inorden del BST)."""
-    raise NotImplementedError("Flow 1: GET /products")
+    return c.catalog.list_products(sort=sort)
 
 
 @router.get("/search", response_model=SearchOut)
@@ -40,16 +40,23 @@ def search_products(
     Cada criterio recibido se registra en el historial de búsquedas: c.search_history.record(name)
     y después c.search_history.record(brand).
     """
-    raise NotImplementedError("Flow 1: GET /products/search")
+    results, comparisons = c.catalog.search(name=name, brand=brand)
+
+    if name and name.strip():
+        c.search_history.record(name.strip())
+    if brand and brand.strip():
+        c.search_history.record(brand.strip())
+
+    return {"results": results, "comparisons": comparisons}
 
 
 @router.get("/compare-search", response_model=CompareSearchOut)
 def compare_search(code: int, c: Container = Depends(get_container)):
     """Busca el mismo código en la lista y en el BST y devuelve las comparaciones de cada uno."""
-    raise NotImplementedError("Flow 1: GET /products/compare-search")
+    return c.catalog.compare_search(code)
 
 
 @router.get("/{code}", response_model=ProductOut)
 def get_product(code: int, c: Container = Depends(get_container)):
     """Un producto activo, buscado con el BST. 404 si no existe o está inactivo."""
-    raise NotImplementedError("Flow 1: GET /products/{code}")
+    return c.catalog.get(code)
