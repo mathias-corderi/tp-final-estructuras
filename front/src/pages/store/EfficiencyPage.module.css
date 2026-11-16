@@ -1,0 +1,117 @@
+.methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 20px;
+}
+
+.methods h2,
+.lab h2,
+.why h2 {
+  font-size: 22px;
+}
+
+.methods p {
+  margin-top: 8px;
+  color: var(--ink-soft);
+}
+
+.methods .usage {
+  font-weight: 600;
+  color: var(--primary-ink);
+}
+
+.lab {
+  margin-top: 24px;
+}
+
+.lead {
+  margin-top: 6px;
+  color: var(--ink-soft);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: 16px 32px;
+  align-items: start;
+  margin-top: 20px;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+/* El botón se alinea con el campo, debajo de la etiqueta. */
+.form > button {
+  margin-top: 27px;
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.result h3 {
+  font-size: 20px;
+}
+
+.result p {
+  color: var(--ink-soft);
+}
+
+.result .verdict {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.barText {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 12px;
+}
+
+.track {
+  height: 16px;
+  border-radius: 4px;
+  background: var(--surface-soft);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  min-width: 4px;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.list {
+  background: var(--ink-faint);
+}
+
+.tree {
+  background: var(--primary);
+}
+
+.why {
+  max-width: 68ch;
+  margin-top: 32px;
+}
+
+.why p {
+  margin-top: 8px;
+  color: var(--ink-soft);
+}

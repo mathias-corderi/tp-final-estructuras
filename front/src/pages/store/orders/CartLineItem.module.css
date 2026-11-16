@@ -1,0 +1,125 @@
+.line {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto 44px;
+  grid-template-areas:
+    'thumb info info remove'
+    'quantity quantity subtotal subtotal';
+  gap: 10px 12px;
+  align-items: center;
+  padding: 16px;
+}
+
+.line > :first-child {
+  grid-area: thumb;
+}
+
+.line > [role='group'] {
+  grid-area: quantity;
+  justify-self: start;
+}
+
+.info {
+  grid-area: info;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.name {
+  font-weight: 600;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+a.name {
+  text-decoration: none;
+}
+
+a.name:hover {
+  color: var(--primary-ink);
+  text-decoration: underline;
+}
+
+.subtotal {
+  grid-area: subtotal;
+  justify-self: end;
+  font-size: 17px;
+  transition: opacity 0.15s ease 0.1s;
+}
+
+/* Mientras llega la cotización nueva, el subtotal todavía es el anterior. */
+[aria-busy='true'] .subtotal {
+  opacity: 0.5;
+}
+
+.remove {
+  grid-area: remove;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.remove:hover {
+  background: var(--danger-tint);
+  color: var(--danger-ink);
+}
+
+.remove:focus-visible {
+  border-radius: 50%;
+}
+
+.unavailable {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  grid-template-areas:
+    'thumb info'
+    'actions actions';
+  gap: 8px 12px;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.unavailable > :first-child {
+  grid-area: thumb;
+  /* El tono de la categoría puede ser el mismo del aviso. */
+  background: var(--surface);
+}
+
+.reason {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  font-size: 14px;
+  color: var(--warning-ink);
+}
+
+.reason strong {
+  font-weight: 700;
+}
+
+.actions {
+  grid-area: actions;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+@container (min-width: 560px) {
+  .line {
+    grid-template-columns: 48px minmax(0, 1fr) auto minmax(104px, auto) 44px;
+    grid-template-areas: 'thumb info quantity subtotal remove';
+  }
+
+  .unavailable {
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    grid-template-areas: 'thumb info actions';
+  }
+}

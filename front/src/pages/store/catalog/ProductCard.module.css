@@ -1,0 +1,98 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow);
+}
+
+.media {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 0 0 2px var(--surface);
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px;
+}
+
+/* Siempre reserva dos renglones: así todas las tarjetas de una fila quedan parejas. */
+.name {
+  display: -webkit-box;
+  min-height: calc(2 * 1.35em);
+  overflow: hidden;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.name a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.name a:hover {
+  color: var(--primary-ink);
+  text-decoration: underline;
+}
+
+/* Toda la tarjeta lleva al producto; el botón queda por encima. */
+.name a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+}
+
+.name a:focus-visible {
+  box-shadow: none;
+}
+
+.name a:focus-visible::after {
+  box-shadow: inset var(--focus-ring);
+}
+
+.brand {
+  font-size: 13px;
+  color: var(--ink-faint);
+  overflow-wrap: anywhere;
+}
+
+.footer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 10px;
+}
+
+.action {
+  position: relative;
+  z-index: 1;
+}
