@@ -3,8 +3,11 @@
 Se levanta con:  uvicorn store.api.app:app --reload     (documentación en http://127.0.0.1:8000/docs)
 """
 
+import asyncio
+
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 from store.api.routes import (
     admin_categories,
@@ -26,8 +29,29 @@ header `X-Admin-Token` (variable de entorno `STORE_ADMIN_TOKEN`, por defecto `ch
 """
 
 
+class OneRequestAtATime:
+    """Atiende los requests de a uno.
+
+    FastAPI corre cada ruta en un hilo distinto, y los servicios comparten estado en memoria
+    sin protegerlo: dos pedidos simultáneos podían recibir el mismo id, o dos guardados pisarse.
+    Para una tienda de este tamaño alcanza con no dejar que dos requests se crucen.
+    """
+
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
+        self.lock = asyncio.Lock()
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        async with self.lock:
+            await self.app(scope, receive, send)
+
+
 def create_app() -> FastAPI:
     app = FastAPI(title="Store API", version="0.1.0", description=DESCRIPTION)
+    app.add_middleware(OneRequestAtATime)
 
     for module in (
         products,
