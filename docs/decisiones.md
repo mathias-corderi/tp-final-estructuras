@@ -27,11 +27,24 @@
 
 ## Flujo 4: cola de pedidos
 
-- **Por qué una cola:** los pedidos se atienden en orden de llegada (FIFO). _(completar: por qué nodos enlazados y no `list.pop(0)`, que es O(n))_.
-- **Cancelar un pedido del medio de la cola:** _(completar: cómo funciona `remove_first`)_.
+- **Por qué una cola:** los pedidos se atienden en orden de llegada (FIFO): el dueño siempre completa el pendiente más viejo. Con nodos enlazados y referencias al frente (`_front`) y al final (`_back`), `enqueue` y `dequeue` son O(1). Con una lista de Python, `list.pop(0)` es O(n) porque corre todos los elementos un lugar. Medido vaciando la cola entera:
+
+  | Pedidos en cola | `Queue.dequeue` | `list.pop(0)` |
+  |---|---|---|
+  | 10.000 | 5,9 ms | 32,8 ms |
+  | 100.000 | 60,3 ms | 4.603 ms |
+
+  La cola crece lineal (10× pedidos → 10× tiempo); la lista crece cuadrático (10× pedidos → ~140× tiempo).
+- **Cancelar un pedido del medio de la cola:** `remove_first(predicado)` recorre los nodos con dos referencias, `previous` y `current`. Cuando `current` cumple el predicado, se "puentea": `previous.next = current.next`. Hay dos casos borde: si era el frente, avanza `_front`; si era el final, `_back` pasa a ser `previous`. Es O(n), pero cancelar es mucho menos frecuente que atender.
+- **Todos los pedidos en una lista + los pendientes en la cola:** las dos guardan los mismos objetos `Order`. La lista queda ordenada por id solo con `append` (los ids son crecientes), así que `get(id)` usa **búsqueda binaria**: O(log n).
+- **Comprar sin dejar stock a medias:** `place_order` primero junta los códigos repetidos con un `Cart` (`[(30, 2), (30, 2)]` → 4 unidades), después revisa el stock de **todas** las líneas y recién ahí reserva. Si una línea falla, no se tocó nada.
+- **Precio congelado:** `OrderItem.unit_price` guarda el `final_price` (con descuento) del momento de la compra; si después el dueño cambia el precio, el pedido no cambia.
+- **Encapsulamiento:** `Order` y `OrderItem` exponen todo con `@property`; `items` devuelve una copia y solo `status` tiene setter (valida con `OrderStatus`).
 
 ## Flujo 5: persistencia, historial y reportes
 
-- **JSON con escritura atómica:** _(completar: por qué archivo temporal + `os.replace`)_.
-- **Historial con cola acotada:** _(completar: qué pasa al llenarse)_.
-- **Estadísticas de las estructuras:** _(completar: altura de cada BST y profundidad del árbol en el seed)_.
+- **JSON con escritura atómica:** `save()` escribe en un archivo temporal de la misma carpeta y recién al final lo pone en su lugar con `os.replace`, que cambia un archivo por otro en un solo paso. Así, quien lee `store.json` ve la versión vieja completa o la nueva completa, nunca una mezcla. Va en la misma carpeta porque `os.replace` solo es atómico dentro de un mismo sistema de archivos, y el nombre lo da `mkstemp` porque la API atiende en varios hilos y dos guardados no pueden compartir el temporal. Lo comprobamos: con un `open(path, "w")` directo, un guardado que falla a mitad de camino (un dato que no se puede convertir a JSON) dejó un `store.json` truncado que ya no cargaba, y los tests de `test_storage.py` pasaban igual; por eso existe `tests/unit/test_storage_atomic.py`. **Límite conocido:** esto protege de una falla del programa. Para resistir también un corte de luz habría que llamar a `os.fsync` antes del reemplazo, y hoy no está.
+- **Historial con cola acotada:** queremos las últimas N búsquedas, y eso es FIFO: al llenarse, `enqueue` descarta la más vieja antes de agregar la nueva, en O(1) y sin que la memoria crezca (N = `search_history_size`: 10 por defecto, entre 1 y 100). `top_terms` cuenta solo lo que sigue en la cola, así que una búsqueda descartada deja de contar. Si el dueño achica el tamaño, `resize` descarta las más viejas. El historial llega al archivo con el siguiente cambio de la tienda y no con cada búsqueda, porque buscar es una lectura (`GET`) y no dispara `on_change`.
+- **Estadísticas de las estructuras:** medido sobre el seed (38 productos, 25 categorías): el BST por código y el BST por nombre tienen altura **11**, y el árbol de categorías tiene profundidad **3**. El mínimo teórico es ⌈log₂(38+1)⌉ = **6** y el peor caso (códigos insertados en orden) sería **38**. O sea que el orden mezclado del seed evita la degeneración, pero el árbol no está balanceado: casi duplica el mínimo.
+- **Por qué los reportes usan `dict` y `sorted()`:** la regla de "todo a mano" es para las estructuras que se evalúan (lista, árboles, pila, cola). Un reporte es un servicio que acumula totales de un recorrido, no reemplaza a ninguna de ellas.
+- **Las ventas salen del pedido, no del catálogo:** `best_sellers` usa el nombre y el precio guardados en cada `OrderItem`. Si después cambia el precio o se borra el producto, lo facturado no cambia.

@@ -26,9 +26,18 @@ from typing import Any, Callable, Iterable
 
 from store.models.product import Product
 from store.models.settings import StoreSettings
-from store.services.undo import Operation
+from store import errors
+from store.services.undo import Operation, OperationKind
+from store.structures.bst import BinarySearchTree
 from store.structures.category_tree import CategoryTree
+from store.structures.product_list import ProductList
+from store.structures.stack import Stack
 from store.errors import ProductNotFound, ValidationError
+
+
+def _is_int(value: Any) -> bool:
+    """True para un int de verdad: bool es subclase de int y hay que excluirlo a mano."""
+    return isinstance(value, int) and not isinstance(value, bool)
 
 
 class CatalogService:
@@ -41,7 +50,13 @@ class CatalogService:
         on_change: Callable[[], None] | None = None,
     ) -> None:
         """FLUJO 2. Crea las estructuras de arriba (vacías) y guarda los argumentos."""
-        raise NotImplementedError("Flow 2: CatalogService.__init__")
+        self._categories = categories
+        self._settings = settings
+        self._on_change = on_change
+        self._list = ProductList()
+        self._by_code = BinarySearchTree()
+        self._by_name = BinarySearchTree()
+        self._undo = Stack()
 
     # ======================================================================
     # FLUJO 2 — administración
@@ -51,11 +66,13 @@ class CatalogService:
 
         DuplicateCode si se repite un código, CategoryNotFound si su categoría no existe.
         """
-        raise NotImplementedError("Flow 2: CatalogService.load")
+        for product in products:
+            self._check_can_insert(product)
+            self._insert(product)
 
     def all_products(self) -> list[Product]:
         """Todos los productos (también los inactivos) en el orden de la lista. Lo usan los reportes y el guardado."""
-        raise NotImplementedError("Flow 2: CatalogService.all_products")
+        return self._list.to_list()
 
     def add(self, data: dict[str, Any]) -> Product:
         """Crea un producto a partir de un dict con los campos del constructor de Product.
@@ -65,7 +82,20 @@ class CatalogService:
           La categoría no existe -> CategoryNotFound.
         - Apila una Operation ADD y llama a on_change.
         """
-        raise NotImplementedError("Flow 2: CatalogService.add")
+        data = dict(data)  # no modificar el dict de quien llama
+        if data.get("min_stock") is None:
+            data["min_stock"] = self._settings.default_min_stock
+        try:
+            product = Product(**data)
+        except ValueError as exc:
+            raise errors.ValidationError(str(exc)) from exc
+        except TypeError as exc:  # faltan campos o sobran
+            raise errors.ValidationError(f"Invalid product fields: {exc}") from exc
+
+        self._check_can_insert(product)
+        self._insert(product)
+        self._push(Operation(OperationKind.ADD, product.code, None, product.to_dict(), f"Add product {product.code} ({product.name})"))
+        return product
 
     def update(self, code: int, changes: dict[str, Any]) -> Product:
         """Cambia algunos campos de un producto (solo UPDATABLE_FIELDS; code y stock no se cambian acá).
@@ -76,15 +106,40 @@ class CatalogService:
         - Resincronizar _by_name si cambió el nombre y el árbol de categorías si cambió la categoría.
         - Apila una Operation UPDATE (before/after solo con los campos cambiados) y llama a on_change.
         """
-        raise NotImplementedError("Flow 2: CatalogService.update")
+        if not changes:
+            raise errors.ValidationError("No fields to update")
+        for field in changes:
+            if field not in self.UPDATABLE_FIELDS:
+                raise errors.ValidationError(f"Field '{field}' cannot be updated")
+        product = self._find(code)
+        if "category" in changes and not self._categories.exists(changes["category"]):
+            raise errors.CategoryNotFound(f"Category '{changes['category']}' not found")
+
+        before = {field: getattr(product, field) for field in changes}
+        try:
+            self._apply(product, changes)
+        except ValueError as exc:
+            raise errors.ValidationError(str(exc)) from exc
+        after = {field: getattr(product, field) for field in changes}
+        self._push(Operation(OperationKind.UPDATE, code, before, after, f"Update product {code} ({', '.join(changes)})"))
+        return product
 
     def delete(self, code: int) -> Product:
         """Lo saca de todas las estructuras. ProductNotFound. Apila una Operation DELETE y llama a on_change."""
-        raise NotImplementedError("Flow 2: CatalogService.delete")
+        product = self._find(code)
+        self._remove(product)
+        self._push(Operation(OperationKind.DELETE, code, product.to_dict(), None, f"Delete product {code} ({product.name})"))
+        return product
 
     def restock(self, code: int, quantity: int) -> Product:
         """Suma unidades. quantity tiene que ser un int > 0 (si no, ValidationError). Apila una Operation STOCK."""
-        raise NotImplementedError("Flow 2: CatalogService.restock")
+        if not _is_int(quantity) or quantity <= 0:
+            raise errors.ValidationError("quantity must be an integer greater than 0")
+        product = self._find(code)
+        before = product.stock
+        product.stock += quantity
+        self._push(Operation(OperationKind.STOCK, code, {"stock": before}, {"stock": product.stock}, f"Restock {code}: +{quantity}"))
+        return product
 
     def adjust_stock(self, code: int, delta: int, reason: str) -> Product:
         """Corrige el stock (roturas, conteo de inventario...). delta puede ser negativo.
@@ -93,14 +148,28 @@ class CatalogService:
         - Si el stock quedaría por debajo de 0 -> InsufficientStock y no cambia nada.
         - Apila una Operation STOCK (la descripción incluye el motivo) y llama a on_change.
         """
-        raise NotImplementedError("Flow 2: CatalogService.adjust_stock")
+        if not _is_int(delta) or delta == 0:
+            raise errors.ValidationError("delta must be a non-zero integer")
+        if not isinstance(reason, str) or not reason.strip():
+            raise errors.ValidationError("reason must be a non-empty string")
+        product = self._find(code)
+        if product.stock + delta < 0:
+            raise errors.InsufficientStock(f"Stock of {code} would be {product.stock + delta}")
+        before = product.stock
+        product.stock += delta
+        self._push(Operation(OperationKind.STOCK, code, {"stock": before}, {"stock": product.stock}, f"Adjust {code}: {delta:+d} ({reason.strip()})"))
+        return product
 
     def change_stock(self, code: int, delta: int) -> Product:
         """Lo usa OrderService para reservar/devolver stock. NO se puede deshacer y NO llama a on_change.
 
         ProductNotFound (los inactivos también se encuentran). InsufficientStock si quedaría por debajo de 0.
         """
-        raise NotImplementedError("Flow 2: CatalogService.change_stock")
+        product = self._find(code)
+        if product.stock + delta < 0:
+            raise errors.InsufficientStock(f"Not enough stock of {code}: {product.stock} available")
+        product.stock += delta
+        return product
 
     def undo(self) -> Operation:
         """Revierte la operación más reciente y la devuelve. NothingToUndo si la pila está vacía.
@@ -108,11 +177,96 @@ class CatalogService:
         Si revertir falla (por ejemplo, ahora el stock es muy bajo), lanzar el error y
         dejar la operación en la pila. Revertir NO apila una operación nueva.
         """
-        raise NotImplementedError("Flow 2: CatalogService.undo")
+        if self._undo.is_empty():
+            raise errors.NothingToUndo("Nothing to undo")
+        # peek y no pop: si revertir falla, la operación tiene que quedar en la pila.
+        operation = self._undo.peek()
+        if operation.kind is OperationKind.ADD:
+            self._remove(self._find(operation.code))
+        elif operation.kind is OperationKind.DELETE:
+            product = Product.from_dict(operation.before)
+            self._check_can_insert(product)
+            self._insert(product)
+        elif operation.kind is OperationKind.UPDATE:
+            product = self._find(operation.code)
+            category = operation.before.get("category")
+            if category is not None and not self._categories.exists(category):
+                raise errors.CategoryNotFound(f"Category '{category}' not found")
+            self._apply(product, operation.before)
+        elif operation.kind is OperationKind.STOCK:
+            # Se revierte la DIFERENCIA sobre el stock actual: si en el medio hubo
+            # ventas (change_stock), no se pierden.
+            product = self._find(operation.code)
+            delta = operation.before["stock"] - operation.after["stock"]
+            if product.stock + delta < 0:
+                raise errors.InsufficientStock(f"Cannot undo: stock of {product.code} would be {product.stock + delta}")
+            product.stock += delta
+        self._undo.pop()
+        if self._on_change is not None:
+            self._on_change()
+        return operation
 
     def undo_history(self) -> list[Operation]:
         """Operaciones pendientes de deshacer, la más reciente primero."""
-        raise NotImplementedError("Flow 2: CatalogService.undo_history")
+        return self._undo.to_list()
+
+    # ======================================================================
+    # FLUJO 2 — ayudantes internos
+    # ======================================================================
+    def _find(self, code: int) -> Product:
+        """El producto con ese código (también inactivo). ProductNotFound si no está."""
+        product, _ = self._by_code.search(code)  # search devuelve (valor, comparaciones)
+        if product is None:
+            raise errors.ProductNotFound(f"Product {code} not found")
+        return product
+
+    def _check_can_insert(self, product: Product) -> None:
+        if self._by_code.contains(product.code):
+            raise errors.DuplicateCode(f"Product code {product.code} already exists")
+        if not self._categories.exists(product.category):
+            raise errors.CategoryNotFound(f"Category '{product.category}' not found")
+
+    def _insert(self, product: Product) -> None:
+        """Lo agrega a las cuatro estructuras."""
+        self._list.append(product)
+        self._by_code.insert(product.code, product)
+        self._by_name.insert((product.name.lower(), product.code), product)
+        self._categories.add_item(product.category, product)
+
+    def _remove(self, product: Product) -> None:
+        """Lo saca de las cuatro estructuras."""
+        self._list.remove(product.code)
+        self._by_code.delete(product.code)
+        self._by_name.delete((product.name.lower(), product.code))
+        self._categories.remove_item(product.category, product)
+
+    def _apply(self, product: Product, changes: dict[str, Any]) -> None:
+        """Aplica `changes` y resincroniza las claves (nombre y categoría).
+
+        Si algún valor es inválido, el setter lanza ValueError y se vuelve atrás lo ya
+        aplicado, así que el producto queda como estaba.
+        """
+        old_name, old_category = product.name, product.category
+        previous = {field: getattr(product, field) for field in changes}
+        try:
+            for field, value in changes.items():
+                setattr(product, field, value)
+        except ValueError:
+            for field, value in previous.items():
+                setattr(product, field, value)
+            raise
+        if product.name != old_name:
+            self._by_name.delete((old_name.lower(), product.code))
+            self._by_name.insert((product.name.lower(), product.code), product)
+        if product.category != old_category:
+            self._categories.remove_item(old_category, product)
+            self._categories.add_item(product.category, product)
+
+    def _push(self, operation: Operation) -> None:
+        """Apila la operación para poder deshacerla y avisa que hubo un cambio."""
+        self._undo.push(operation)
+        if self._on_change is not None:
+            self._on_change()
 
     # ======================================================================
     # FLUJO 1 — consultas
