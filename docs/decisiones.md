@@ -22,8 +22,23 @@
 
 ## Flujo 3: árbol n-ario de categorías
 
-- **Por qué un árbol y no una lista de categorías:** _(completar: jerarquía de profundidad variable, contar productos de una rama completa, ajustar precios por rama)_.
-- **Recorrido en preorden:** _(completar)_.
+- **Por qué un árbol y no una lista de categorías:** las categorías forman una jerarquía de profundidad variable ("Grocery/Drinks/Sodas" tiene 3 niveles, "Cleaning" tiene 1). Una lista plana de strings no expresa quién es hijo de quién, y cada pregunta de la tienda ("¿cuántos productos hay en Grocery?", "subí 10 % toda la rama Drinks") habría que resolverla comparando prefijos de texto contra todos los productos. En el árbol, una rama es un subárbol: se baja hasta el nodo y se recorre solo lo que cuelga de él. Medido sobre el seed (38 productos, 25 categorías, profundidad **3**):
+
+  | Rama | Productos | Nodos que recorre el árbol | Productos que revisaría una lista |
+  |---|---|---|---|
+  | `Grocery` | 22 | 12 | 38 |
+  | `Grocery/Drinks` | 9 | 4 | 38 |
+  | `Cleaning` | 6 | 4 | 38 |
+  | `Electronics/Accessories` | 4 | 3 | 38 |
+
+  Con 38 productos la diferencia es chica, pero el árbol solo visita su rama y la lista siempre revisa todo, así que la brecha crece con el catálogo. Cada nodo guarda sus hijos en una lista y sus productos en otra (sin `dict`, por RNF-01); buscar un hijo por nombre es un `for`, que alcanza porque un nodo tiene pocos hijos.
+- **Recorrido en preorden:** primero los productos del propio nodo y después cada hijo, en orden de creación. Se eligió porque devuelve "lo más general primero": en `GET /categories/products?path=Grocery/Drinks` salen antes los productos que cuelgan directo de `Drinks` que los de `Sodas` o `Water`. Es el mismo recorrido para `items`, `paths` y `to_dict`, así que el listado, el guardado en el JSON y el reporte salen en el mismo orden. Como las categorías se guardan en preorden, al cargar el archivo siempre aparece el padre antes que sus hijos.
+- **La ruta no se guarda, se calcula:** `CategoryNode.path` sube por los padres juntando nombres. Por eso `rename` solo cambia el `name` de un nodo y las rutas de todos sus descendientes cambian solas. Lo único que hay que actualizar a mano es el texto `product.category` de los productos del subárbol; `CategoryService.rename` los recorre y deja cada `category` igual a la ruta del nodo donde cuelga el producto.
+- **`product_count` en una sola pasada:** `to_dict` calcula el conteo de cada nodo sumando sus propios productos más lo que ya contaron sus hijos, sin volver a recorrer el subárbol. A los clientes se les cuenta solo lo activo (`item_filter`); los reportes del dueño cuentan todo.
+- **Borrar solo si está vacía:** una categoría con subcategorías o con productos (los inactivos también cuentan) no se borra, porque dejaría productos sin lugar en el árbol. Es un `409` y el dueño decide qué hacer con ellos.
+- **Ajuste de precios todo o nada:** `adjust_prices` calcula primero todos los precios nuevos y recién después los asigna. Si alguno quedara en 0 o menos (por ejemplo, un precio muy bajo con −90 %), no se cambia ninguno. Alcanza a los productos inactivos y no se puede deshacer, porque no pasa por `CatalogService` (que es quien apila las operaciones del `Stack`).
+- **Dos capas de errores:** el árbol lanza `KeyError` y `ValueError` (no conoce la API); el servicio los traduce a `CategoryNotFound` y `ValidationError`, y los conflictos (`CategoryAlreadyExists`, `CategoryNotEmpty`) los detecta el servicio antes de tocar el árbol.
+
 
 ## Flujo 4: cola de pedidos
 
