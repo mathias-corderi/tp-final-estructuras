@@ -1,0 +1,58 @@
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 48px 20px;
+  text-align: center;
+}
+
+.state h2 {
+  font-size: 22px;
+}
+
+.state p {
+  max-width: 46ch;
+  color: var(--ink-soft);
+}
+
+.state > button,
+.state > a {
+  margin-top: 8px;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: var(--surface-soft);
+  color: var(--ink-soft);
+}
+
+.skeleton {
+  display: block;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--surface-soft), #faf6ef, var(--surface-soft));
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}

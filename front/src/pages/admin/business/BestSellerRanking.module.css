@@ -1,0 +1,63 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  gap: 10px;
+}
+
+.rank {
+  flex: none;
+  width: 22px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 24px;
+  color: var(--ink-faint);
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 12px;
+  margin-bottom: 4px;
+}
+
+.name {
+  min-width: 0;
+  font-weight: 500;
+}
+
+.values {
+  font-size: 14px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.values strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.track {
+  height: 12px;
+  overflow: hidden;
+  background: var(--surface-soft);
+}
+
+.bar {
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+  background: var(--primary);
+}

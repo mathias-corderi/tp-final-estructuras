@@ -1,0 +1,25 @@
+.layout {
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+
+.content {
+  min-width: 0;
+}
+
+.trail {
+  margin-bottom: 12px;
+}
+
+.options {
+  margin: -8px 0 20px;
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+}

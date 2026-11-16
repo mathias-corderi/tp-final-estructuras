@@ -1,0 +1,91 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.note {
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+}
+
+.limit {
+  width: 120px;
+}
+
+.bareList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Cada Stat ocupa toda su celda, para que la fila quede pareja. */
+.statItems li {
+  display: grid;
+}
+
+.statusList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: 12px 24px;
+}
+
+.statusList li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.statusCount {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  align-items: start;
+  gap: 16px;
+}
+
+.path {
+  display: block;
+}
+
+.pathParent {
+  color: var(--ink-faint);
+}
+
+.pathLeaf {
+  font-weight: 600;
+}
+
+.terms {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.term {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  overflow-wrap: anywhere;
+}
+
+.termCount {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}

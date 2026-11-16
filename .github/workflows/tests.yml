@@ -30,6 +30,31 @@ jobs:
       - run: pip install -r requirements.txt
       - run: pytest -q
 
+  front:
+    name: front (must pass)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+        working-directory: .
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: front/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      # El mismo contrato que usa el front, contra la API de este repo.
+      - run: npm run test:contract:real
+
   progress:
     name: progress ${{ matrix.flow }}
     runs-on: ubuntu-latest

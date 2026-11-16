@@ -1,0 +1,25 @@
+.price {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+}
+
+.price strong {
+  font-weight: 700;
+}
+
+.price s {
+  font-size: 0.85em;
+  color: var(--ink-faint);
+}
+
+.md strong {
+  font-size: 19px;
+}
+
+.lg strong {
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 600;
+}

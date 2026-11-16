@@ -1,0 +1,52 @@
+.thumb {
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.sm {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+}
+
+.md {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+}
+
+.lg {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius-lg);
+}
+
+.mustard {
+  background: #fbf0d6;
+  color: #a87416;
+}
+
+.sky {
+  background: #e2edf5;
+  color: #3d6a8c;
+}
+
+.rose {
+  background: #f9e5de;
+  color: #b1553b;
+}
+
+.sage {
+  background: #e3efe9;
+  color: #2f6b55;
+}
+
+.clay {
+  background: #f1e8dc;
+  color: #8a6a43;
+}
+
+.neutral {
+  background: var(--surface-soft);
+  color: var(--ink-soft);
+}

@@ -1,0 +1,47 @@
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 18px;
+  grid-template-areas:
+    'number total chevron'
+    'status status chevron';
+  gap: 4px 12px;
+  align-items: center;
+  min-height: 56px;
+  padding: 12px 16px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.row:hover {
+  background: var(--surface-soft);
+}
+
+.number {
+  grid-area: number;
+}
+
+.status {
+  grid-area: status;
+}
+
+.total {
+  grid-area: total;
+  font-weight: 600;
+}
+
+.missing {
+  font-size: 14px;
+  color: var(--ink-faint);
+}
+
+.chevron {
+  grid-area: chevron;
+  color: var(--ink-faint);
+}
+
+@media (min-width: 481px) {
+  .row {
+    grid-template-columns: 110px minmax(0, 1fr) auto 18px;
+    grid-template-areas: 'number status total chevron';
+  }
+}

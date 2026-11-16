@@ -1,0 +1,25 @@
+.action {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.action:hover {
+  border-color: var(--border-strong);
+  background: var(--surface);
+  color: var(--primary-ink);
+}
+
+.danger:hover {
+  border-color: var(--danger-tint);
+  background: var(--danger-tint);
+  color: var(--danger-ink);
+}

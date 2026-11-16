@@ -1,0 +1,39 @@
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 10px;
+  padding: 6px 16px;
+  background: var(--warning-tint);
+  color: var(--warning-ink);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.banner code {
+  font-weight: 700;
+}
+
+@media (max-width: 720px) {
+  .banner {
+    padding: 4px 12px;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .banner svg {
+    display: none;
+  }
+}
+
+.banner button {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}

@@ -1,0 +1,83 @@
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tiles > li {
+  display: flex;
+  min-width: 0;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 20px;
+  border-radius: var(--radius);
+  background: var(--tile-bg);
+  color: var(--tile-ink);
+  text-decoration: none;
+  transition: box-shadow 0.15s ease;
+}
+
+.tile:hover {
+  box-shadow: var(--shadow);
+}
+
+.tile:focus-visible {
+  border-radius: var(--radius);
+}
+
+.name {
+  margin-top: 12px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.count {
+  font-size: 14px;
+}
+
+.mustard {
+  --tile-bg: var(--warning-tint);
+  --tile-ink: var(--warning-ink);
+}
+
+.sky {
+  --tile-bg: var(--info-tint);
+  --tile-ink: var(--info-ink);
+}
+
+.rose {
+  --tile-bg: var(--accent-tint);
+  --tile-ink: var(--accent-ink);
+}
+
+.sage {
+  --tile-bg: var(--primary-tint);
+  --tile-ink: var(--primary-ink);
+}
+
+.clay,
+.neutral {
+  --tile-bg: var(--surface-soft);
+  --tile-ink: var(--ink-soft);
+}
+
+@media (max-width: 640px) {
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .tile {
+    padding: 16px;
+  }
+}

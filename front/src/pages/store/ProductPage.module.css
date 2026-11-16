@@ -1,0 +1,75 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+  margin-top: 20px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+}
+
+.info h1 {
+  margin-top: -8px;
+  font-size: clamp(28px, 4vw, 38px);
+  overflow-wrap: anywhere;
+}
+
+.brand {
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.buy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.note {
+  flex-basis: 100%;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.code {
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--ink-faint);
+}
+
+.related {
+  margin-top: 56px;
+}
+
+.related h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+@media (max-width: 760px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .media {
+    width: 100%;
+    max-width: 260px;
+    margin: 0 auto;
+  }
+}

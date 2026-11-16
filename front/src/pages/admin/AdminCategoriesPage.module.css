@@ -1,0 +1,12 @@
+.note {
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.tree {
+  padding: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}

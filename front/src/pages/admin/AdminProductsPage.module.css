@@ -1,0 +1,28 @@
+.filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 170px 150px;
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.filters input,
+.filters select {
+  height: 44px;
+}
+
+.count {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 640px) {
+  .filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .search {
+    grid-column: 1 / -1;
+  }
+}
