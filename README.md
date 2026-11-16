@@ -2,10 +2,11 @@
 
 Sistema de gestión para una **tienda**: los clientes navegan el catálogo, buscan productos, cotizan un carrito y hacen pedidos; el **dueño** administra todo el negocio (productos, precios y descuentos, categorías, stock, pedidos, reportes, configuración y deshacer).
 
-Toda la lógica vive en un núcleo propio con **estructuras de datos implementadas a mano**, y se usa desde dos interfaces:
+Toda la lógica vive en un núcleo propio con **estructuras de datos implementadas a mano**, y se usa desde tres interfaces:
 
 - **Consola** (`python main.py`): el menú que pide la consigna.
-- **API REST** (`uvicorn store.api.app:app`): la misma lógica expuesta por HTTP, lista para conectarle un front más adelante.
+- **API REST** (`uvicorn store.api.app:app`): la misma lógica expuesta por HTTP, que usa el front.
+- **Front web** (`front/`): tienda para los clientes y panel del dueño, hecho con React. Ver [`front/README.md`](front/README.md).
 
 ## Integrantes
 
@@ -27,12 +28,33 @@ source .venv/bin/activate          # fish: source .venv/bin/activate.fish · Win
 pip install -r requirements.txt
 ```
 
+### Todo junto con un comando (para probar o presentar)
+
+```bash
+python demo.py            # usa data/store.json
+python demo.py --fresh    # arranca de cero con una copia del seed, sin tocar data/store.json
+```
+
+Compila el front si hace falta (necesita [Node](https://nodejs.org) 20 o superior la primera vez), levanta un solo
+servidor y abre el navegador:
+
+- Tienda: http://127.0.0.1:8000
+- Panel del dueño: http://127.0.0.1:8000/admin (token `change-me`)
+- API con documentación interactiva: http://127.0.0.1:8000/api/docs
+
+FastAPI sirve el front compilado (`front/dist`) y la API bajo `/api` (`store/web.py`), así que el navegador ve un
+solo origen y no hace falta CORS.
+
+### Cada parte por separado
+
 | Qué | Comando |
 |---|---|
 | Menú de consola | `python main.py` |
 | API + documentación interactiva | `uvicorn store.api.app:app --reload` → http://127.0.0.1:8000/docs |
 | Todos los tests | `pytest` |
 | Tests de un flujo | `pytest -m flow_orders` (ver `docs/assignments.md`) |
+| Front conectado a la API (para desarrollarlo) | `uvicorn store.api.app:app --reload` y, en `front/`, `npm install` y `npm run dev` → http://localhost:5173 |
+| Tests del front | en `front/`: `npm test`, `npm run test:contract:real`, `npm run e2e:real` |
 
 - **Token de administrador:** se toma de la variable `STORE_ADMIN_TOKEN` (por defecto `change-me`). En la API se manda en el header `X-Admin-Token`; en la consola lo pide la opción "Admin mode".
 - **Datos:** la primera vez se copia `data/seed.json` a `data/store.json`, que no se sube a git. Para volver a los datos iniciales, borrá `data/store.json`.
