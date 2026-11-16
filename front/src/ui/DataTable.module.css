@@ -1,0 +1,43 @@
+.wrapper {
+  /* Sin esto, un texto .visually-hidden de adentro escapa del recorte y genera scroll en la página. */
+  position: relative;
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.table thead th {
+  padding: 12px 14px;
+  background: var(--surface-soft);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table td,
+.table tbody th {
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+  font-weight: inherit;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background: #fdfbf7;
+}
+
+.table .numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
