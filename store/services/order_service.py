@@ -219,7 +219,8 @@ class OrderService:
             try:
                 self._catalog.change_stock(item.code, item.quantity)
             except ProductNotFound:
-                pass  # el producto se borró del catálogo: no hay a dónde devolver el stock
+                # El producto se borró del catálogo: el stock queda guardado por si se deshace la baja.
+                self._catalog.return_stock_to_deleted(item.code, item.quantity)
         order.status = OrderStatus.CANCELLED
         self._changed()
         return order

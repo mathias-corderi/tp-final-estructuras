@@ -29,7 +29,7 @@ from store.models.settings import StoreSettings
 from store import errors
 from store.services.undo import Operation, OperationKind
 from store.structures.bst import BinarySearchTree
-from store.structures.category_tree import CategoryTree
+from store.structures.category_tree import CategoryTree, split_path
 from store.structures.product_list import ProductList
 from store.structures.stack import Stack
 from store.errors import ProductNotFound, ValidationError
@@ -83,6 +83,8 @@ class CatalogService:
         - Apila una Operation ADD y llama a on_change.
         """
         data = dict(data)  # no modificar el dict de quien llama
+        if "category" in data:
+            data["category"] = self._canonical_category(data["category"])
         if data.get("min_stock") is None:
             data["min_stock"] = self._settings.default_min_stock
         try:
@@ -112,6 +114,8 @@ class CatalogService:
             if field not in self.UPDATABLE_FIELDS:
                 raise errors.ValidationError(f"Field '{field}' cannot be updated")
         product = self._find(code)
+        if "category" in changes:
+            changes = {**changes, "category": self._canonical_category(changes["category"])}
         if "category" in changes and not self._categories.exists(changes["category"]):
             raise errors.CategoryNotFound(f"Category '{changes['category']}' not found")
 
@@ -185,14 +189,22 @@ class CatalogService:
             self._remove(self._find(operation.code))
         elif operation.kind is OperationKind.DELETE:
             product = Product.from_dict(operation.before)
-            self._check_can_insert(product)
+            if self._by_code.contains(product.code):
+                raise errors.DuplicateCode(f"Product code {product.code} already exists")
+            self._ensure_category(product.category)
             self._insert(product)
         elif operation.kind is OperationKind.UPDATE:
             product = self._find(operation.code)
-            category = operation.before.get("category")
-            if category is not None and not self._categories.exists(category):
-                raise errors.CategoryNotFound(f"Category '{category}' not found")
-            self._apply(product, operation.before)
+            # Solo se revierten los campos que siguen como los dejó esta operación: si algo
+            # que no se deshace (un ajuste de precios por categoría) los cambió después, se respeta.
+            to_restore = {
+                field: value
+                for field, value in operation.before.items()
+                if getattr(product, field) == operation.after[field]
+            }
+            if "category" in to_restore:
+                self._ensure_category(to_restore["category"])
+            self._apply(product, to_restore)
         elif operation.kind is OperationKind.STOCK:
             # Se revierte la DIFERENCIA sobre el stock actual: si en el medio hubo
             # ventas (change_stock), no se pierden.
@@ -211,6 +223,35 @@ class CatalogService:
         return self._undo.to_list()
 
     # ======================================================================
+    # Integración con los otros flujos
+    # ======================================================================
+    def category_renamed(self, old_path: str, new_path: str) -> None:
+        """Lo llama CategoryService después de renombrar: actualiza las rutas guardadas para deshacer.
+
+        Sin esto, deshacer una baja o un cambio de categoría intentaría volver a una ruta que ya
+        no existe, fallaría siempre y dejaría bloqueada toda la pila.
+        """
+        prefix = old_path + "/"
+        for operation in self._undo.to_list():
+            for snapshot in (operation.before, operation.after):
+                category = snapshot.get("category") if snapshot else None
+                if category == old_path:
+                    snapshot["category"] = new_path
+                elif isinstance(category, str) and category.startswith(prefix):
+                    snapshot["category"] = new_path + "/" + category[len(prefix):]
+
+    def return_stock_to_deleted(self, code: int, quantity: int) -> None:
+        """Lo llama OrderService al cancelar un pedido de un producto que ya se borró.
+
+        El stock no tiene a dónde volver, así que se suma a la copia guardada para deshacer
+        la baja: si después se deshace, el producto vuelve con el stock correcto.
+        """
+        for operation in self._undo.to_list():  # la más reciente primero
+            if operation.kind is OperationKind.DELETE and operation.code == code:
+                operation.before["stock"] += quantity
+                return
+
+    # ======================================================================
     # FLUJO 2 — ayudantes internos
     # ======================================================================
     def _find(self, code: int) -> Product:
@@ -219,6 +260,22 @@ class CatalogService:
         if product is None:
             raise errors.ProductNotFound(f"Product {code} not found")
         return product
+
+    def _ensure_category(self, path: str) -> None:
+        """Al deshacer, la categoría original puede haberse borrado: se vuelve a crear."""
+        if not self._categories.exists(path):
+            self._categories.add_path(path)
+
+    @staticmethod
+    def _canonical_category(path: Any) -> Any:
+        """" Grocery /  Drinks " -> "Grocery/Drinks", así el producto queda con la misma ruta que el árbol."""
+        if not isinstance(path, str):
+            return path  # lo rechaza la validación de Product
+        try:
+            segments = split_path(path)
+        except ValueError as exc:
+            raise errors.ValidationError(str(exc)) from exc
+        return "/".join(segments) if segments else path
 
     def _check_can_insert(self, product: Product) -> None:
         if self._by_code.contains(product.code):
