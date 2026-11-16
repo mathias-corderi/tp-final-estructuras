@@ -369,8 +369,14 @@ class CatalogService:
         else:
             res_name, comp_name = self._list.search_by_name(name.strip())
             res_brand, comp_brand = self._list.search_by_brand(brand.strip())
-            brand_codes = {p.code for p in res_brand}
-            results = [p for p in res_name if p.code in brand_codes]
+            # Intersección recorriendo las dos listas de resultados (sin set, por RNF-01).
+            # Las dos vienen en el orden de la lista, así que el resultado también.
+            results = []
+            for product in res_name:
+                for match in res_brand:
+                    if match is product:
+                        results.append(product)
+                        break
             comparisons = comp_name + comp_brand
             
         active_results = [p for p in results if p.active]
