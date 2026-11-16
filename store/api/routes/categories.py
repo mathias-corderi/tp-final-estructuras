@@ -15,7 +15,7 @@ router = APIRouter(prefix="/categories", tags=["categories"])
 @router.get("", response_model=CategoryNodeOut)
 def get_category_tree(c: Container = Depends(get_container)):
     """El árbol de categorías completo, anidado, con la cantidad de productos activos debajo de cada nodo."""
-    raise NotImplementedError("Flow 3: GET /categories")
+    return c.categories.tree()
 
 
 @router.get("/products", response_model=list[ProductOut])
@@ -25,4 +25,4 @@ def products_in_category(
     c: Container = Depends(get_container),
 ):
     """Productos activos de una categoría (y sus subcategorías, en preorden). 404 si la ruta no existe."""
-    raise NotImplementedError("Flow 3: GET /categories/products")
+    return c.categories.products(path, include_subcategories)
