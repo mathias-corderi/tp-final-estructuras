@@ -38,7 +38,7 @@ Para que la API y la consola funcionen, cada flujo tiene que tener además estos
 | 4 | `OrderService.__init__`, `load`, `all_orders` |
 | 5 | `SettingsService.__init__`, `ReportService.__init__` |
 
-**Cómo comprobarlo:** `pytest tests/test_seed.py::test_seed_loads_into_a_container` pasa (necesita además `tree_heights` del flujo 1) y `python main.py` muestra "Almacén Grupo TP — MAIN MENU".
+**Cómo comprobarlo:** `pytest tests/test_seed.py::test_seed_loads_into_a_container` pasa (necesita además `tree_heights` del flujo 1) y `python main.py` muestra "Almacén - Grupo 4 — MAIN MENU".
 
 ### Etapa 2 — Servicios y endpoints (tests de API)
 

@@ -6,6 +6,6 @@
  */
 export const config = {
   apiBase: (import.meta.env.VITE_API_BASE as string | undefined) ?? '/api',
-  storeName: (import.meta.env.VITE_STORE_NAME as string | undefined) ?? 'Almacén Grupo TP',
+  storeName: (import.meta.env.VITE_STORE_NAME as string | undefined) ?? 'Almacén - Grupo 4',
   currency: (import.meta.env.VITE_CURRENCY as string | undefined) ?? 'ARS',
 }

@@ -6,7 +6,7 @@ import { renderRoute } from '@/test/render'
 import { mockStore, server } from '@/test/server'
 
 const ROUTE = '/admin/exportar'
-const FIRST_LINE = 'Almacén Grupo TP — Catalog (37 products)'
+const FIRST_LINE = 'Almacén - Grupo 4 — Catalog (37 products)'
 
 const catalog = () => screen.findByRole('region', { name: 'Catálogo exportado' })
 
