@@ -1,0 +1,108 @@
+.tree {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tree .tree {
+  margin-left: 16px;
+  padding-left: 8px;
+  border-left: 1px solid var(--border);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 14px;
+  min-height: 46px;
+  padding: 5px 8px 5px 4px;
+  border-radius: var(--radius-sm);
+}
+
+.row:hover {
+  background: var(--surface-soft);
+}
+
+.title {
+  flex: 1 1 200px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 8px;
+  min-width: 0;
+}
+
+.toggle {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.toggle:hover {
+  background: var(--border);
+}
+
+.toggle svg {
+  transition: transform 0.15s ease;
+}
+
+.toggle .open {
+  transform: rotate(90deg);
+}
+
+.spacer {
+  width: 28px;
+  flex: none;
+}
+
+.name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.translation {
+  font-size: 14px;
+  color: var(--ink-faint);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.count {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+
+.actions {
+  display: flex;
+  gap: 2px;
+}
+
+@media (max-width: 640px) {
+  .tree .tree {
+    margin-left: 10px;
+    padding-left: 4px;
+  }
+
+  .row {
+    padding-bottom: 8px;
+  }
+
+  .meta {
+    flex: 1 1 100%;
+    gap: 4px;
+  }
+}

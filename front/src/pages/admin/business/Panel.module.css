@@ -1,0 +1,29 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+}
+
+.header h2 {
+  font-size: 20px;
+}
+
+.header a {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Grilla de Stat: una columna en mobile, hasta cuatro en escritorio. */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 16px;
+}

@@ -1,0 +1,96 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.muted {
+  color: var(--ink-soft);
+}
+
+.queue {
+  border-color: var(--primary);
+}
+
+.queueRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+}
+
+.queueTitle {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.note {
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.number {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* En pantallas chicas la tabla se desplaza: el número queda a la vista junto a las acciones. */
+@media (max-width: 860px) {
+  .number,
+  .numberHead {
+    position: sticky;
+    left: 0;
+  }
+
+  .number {
+    background: var(--surface);
+  }
+}
+
+.date {
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.detailRow {
+  background: var(--surface-soft);
+}
+
+/* Fijo al borde visible: "Detalle" se aprieta con la tabla desplazada y los nombres no deben quedar afuera. */
+.items {
+  position: sticky;
+  left: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: min(560px, calc(100vw - 62px));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.items li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 16px;
+}
+
+.items strong {
+  font-weight: 600;
+  color: var(--ink);
+}

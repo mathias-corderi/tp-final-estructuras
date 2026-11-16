@@ -1,0 +1,82 @@
+.panel {
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.last {
+  flex: 1 1 220px;
+  min-width: 0;
+  font-size: 14px;
+}
+
+.lastLabel {
+  font-weight: 600;
+}
+
+.operation {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.name {
+  color: var(--ink-soft);
+}
+
+.note {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.history {
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.history summary {
+  width: fit-content;
+  font-weight: 600;
+  color: var(--primary-ink);
+  cursor: pointer;
+}
+
+.history ol {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+.history li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.history li:last-child {
+  border-bottom: none;
+}
+
+.next {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary-ink);
+}
