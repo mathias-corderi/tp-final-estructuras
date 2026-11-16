@@ -22,5 +22,6 @@ def require_admin(x_admin_token: str | None = Header(default=None)) -> None:
     """Protección de las rutas /admin/*: 401 sin el header X-Admin-Token, 403 si es incorrecto."""
     if x_admin_token is None:
         raise HTTPException(status_code=401, detail="Missing X-Admin-Token header")
-    if not secrets.compare_digest(x_admin_token, config.admin_token()):
+    # Se comparan bytes: con strings, compare_digest lanza TypeError (500) si hay caracteres no ASCII.
+    if not secrets.compare_digest(x_admin_token.encode(), config.admin_token().encode()):
         raise HTTPException(status_code=403, detail="Invalid admin token")

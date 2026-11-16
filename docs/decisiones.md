@@ -8,6 +8,23 @@
 - **Los servicios lanzan errores, no devuelven `None`.** Cada error de `store/errors.py` ya sabe qué código HTTP le corresponde.
 - **Todas las estructuras comparten los mismos objetos `Product`.** Cambiar el stock en un lugar se ve en todos. Solo hay que reacomodar cuando cambia una **clave**: el nombre (BST por nombre) o la categoría (árbol).
 
+## Integración entre flujos
+
+Casos que aparecieron al juntar los cinco flujos (tests: `tests/api/test_cross_flow.py`):
+
+- **Deshacer y categorías:** las operaciones de la pila guardan la ruta de la categoría como texto. Al renombrar,
+  `CategoryService` avisa al catálogo (`on_rename`) y se reescriben esas rutas; si la categoría se borró, deshacer la
+  vuelve a crear. Antes, la operación fallaba siempre y, como la consigna pide dejarla en la pila, bloqueaba todo lo de abajo.
+- **Deshacer y ajuste de precios:** una modificación solo revierte los campos que siguen como ella los dejó, para no
+  pisar en silencio un ajuste masivo posterior (que no se puede deshacer).
+- **Deshacer y pedidos:** si se cancela un pedido de un producto ya borrado, el stock se suma a la copia guardada en la
+  pila; si después se deshace la baja, el producto vuelve con el stock correcto.
+- **Requests en paralelo:** FastAPI corre cada ruta en un hilo y los servicios comparten estado sin protegerlo (dos
+  pedidos simultáneos podían recibir el mismo id). La API atiende los requests de a uno (`OneRequestAtATime` en
+  `store/api/app.py`); para una tienda de este tamaño no cambia nada y evita todas las carreras de una vez.
+- **Lo que no se guarda:** la pila de deshacer vive solo en memoria (se pierde al reiniciar) y el historial de
+  búsquedas se escribe en el próximo cambio que guarde. Es una excepción consciente a RNF-02/RNF-03.
+
 ## Flujo 1: lista vs. árbol binario de búsqueda
 
 - **Por qué un BST por código:** _(completar con la medición: comparaciones promedio en la lista vs. en el árbol sobre los 38 productos del seed)_.

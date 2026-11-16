@@ -137,12 +137,17 @@ Lo saca de la lista, de los dos BST y del árbol de categorías.
 Deshace la última operación de catálogo (alta, modificación, baja o stock), en orden LIFO.
 
 ```json
-200 {"undone": {"kind": "stock", "code": 30, "description": "Restocked 5 units of product 30"}}
+200 {"undone": {"kind": "stock", "code": 30, "description": "Restock 30: +5"}}
 ```
 
-→ `409` si no hay nada para deshacer.
+→ `409` si no hay nada para deshacer, o si revertir dejaría el stock negativo (la operación queda en la pila).
 
 No se deshacen: los pedidos, los cambios de categorías, el ajuste masivo de precios ni la configuración.
+Pero deshacer convive con ellos:
+
+- Si la categoría original se renombró, el producto vuelve a la categoría con el nombre nuevo; si se borró, se vuelve a crear.
+- Deshacer una modificación no pisa los campos que cambiaron después (por ejemplo, el precio tras un ajuste masivo).
+- Si se canceló un pedido de un producto ya borrado, deshacer la baja lo restaura con ese stock devuelto.
 
 ### `GET /admin/undo/history`
 Lo que se puede deshacer, de lo más reciente a lo más viejo.

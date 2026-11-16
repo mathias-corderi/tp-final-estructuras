@@ -31,7 +31,9 @@ class Container:
         self.search_history = SearchHistory(self.settings.search_history_size)
         self.category_tree = CategoryTree()
         self.catalog = CatalogService(self.category_tree, self.settings, on_change=self.save)
-        self.categories = CategoryService(self.category_tree, on_change=self.save)
+        self.categories = CategoryService(
+            self.category_tree, on_change=self.save, on_rename=self.catalog.category_renamed
+        )
         self.orders = OrderService(self.catalog, on_change=self.save)
         self.settings_service = SettingsService(self.settings, self.search_history, on_change=self.save)
         self.reports = ReportService(

@@ -21,9 +21,16 @@ def _is_active(product: Product) -> bool:
 
 
 class CategoryService:
-    def __init__(self, tree: CategoryTree, on_change: Callable[[], None] | None = None) -> None:
+    def __init__(
+        self,
+        tree: CategoryTree,
+        on_change: Callable[[], None] | None = None,
+        on_rename: Callable[[str, str], None] | None = None,
+    ) -> None:
         self._tree = tree
         self._on_change = on_change
+        # on_rename(ruta_vieja, ruta_nueva): avisa al catálogo para que actualice lo guardado para deshacer.
+        self._on_rename = on_rename
 
     # --- ayudantes internos ----------------------------------------------------
     def _changed(self) -> None:
@@ -118,8 +125,11 @@ class CategoryService:
         if sibling is not None and sibling is not node:
             raise errors.CategoryAlreadyExists(f"A category named '{new_name}' already exists at that level")
 
+        old_path = node.path
         self._tree.rename(path, new_name)
         self._sync_product_categories(node)
+        if self._on_rename is not None:
+            self._on_rename(old_path, node.path)
         self._changed()
         return self._node_dict(node)
 
